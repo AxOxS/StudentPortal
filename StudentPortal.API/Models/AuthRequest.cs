@@ -1,0 +1,9 @@
+﻿namespace StudentPortal.API.Models
+{
+    //Handle login requests
+    public class AuthRequest
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+}
