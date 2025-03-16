@@ -10,6 +10,10 @@ obj/
 *.swp
 *.swo
 
+# Sensitive configuration files
+appsettings.json
+appsettings.Development.json
+
 # Node.js
 node_modules/
 npm-debug.log*
