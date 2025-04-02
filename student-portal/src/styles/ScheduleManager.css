@@ -1,0 +1,252 @@
+.schedule-manager {
+    margin: 30px 0;
+    padding: 25px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Heading Style */
+.schedule-manager h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eaeaea;
+}
+
+/* Add Schedule Button */
+.schedule-manager > button {
+    padding: 10px 16px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.schedule-manager > button:hover {
+    background-color: #3367d6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.schedule-manager > button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+.schedule-form {
+    display: grid;
+    gap: 15px;
+    max-width: 500px;
+    margin: 20px 0;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-form div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.schedule-form label {
+    font-weight: 500;
+}
+
+.schedule-form input[type="text"],
+.schedule-form input[type="time"],
+.schedule-form select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.schedule-form input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.form-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.form-buttons button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.form-buttons button[type="button"] {
+    background-color: #f44336;
+    color: white;
+}
+
+.schedule-view {
+    margin-top: 40px;
+}
+
+.schedule-view h4 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eaeaea;
+}
+
+.weekly-schedule {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.day-column {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.day-column:hover {
+    transform: translateY(-3px);
+}
+
+.day-header {
+    background-color: #4285f4;
+    color: white;
+    padding: 15px 20px;
+    margin: 0;
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
+}
+
+.day-schedules {
+    padding: 20px;
+    min-height: 100px;
+}
+
+.schedule-block {
+    margin-bottom: 25px;
+    padding: 16px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border-left: 5px solid #4285f4;
+    transition: all 0.2s;
+}
+
+.schedule-block:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.schedule-block:last-child {
+    margin-bottom: 0;
+}
+
+.schedule-block.inactive {
+    border-left-color: #9e9e9e;
+    opacity: 0.7;
+}
+
+.schedule-time {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.schedule-content {
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.schedule-content strong {
+    display: block;
+    font-size: 1.05rem;
+    margin-bottom: 5px;
+    color: #212121;
+}
+
+.schedule-content div {
+    color: #616161;
+    margin: 4px 0;
+}
+
+.schedule-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.schedule-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.schedule-actions button:first-child {
+    background-color: #2196F3;
+    color: white;
+}
+
+.schedule-actions button:last-child {
+    background-color: #f44336;
+    color: white;
+}
+
+.schedule-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.no-schedule {
+    color: #9e9e9e;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.95rem;
+}
+
+/* Larger screens: Switch to horizontal layout */
+@media (min-width: 992px) {
+    .weekly-schedule {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 15px;
+    }
+    
+    .day-column {
+        flex: 1;
+        min-width: 220px;
+        max-width: 300px;
+    }
+}
+
+/* Keep existing button styles */
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}

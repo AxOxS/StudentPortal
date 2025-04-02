@@ -32,13 +32,13 @@ const Dashboard = () => {
     return (
         <div>
             <h2>Welcome, {userRole || 'User'}</h2>
-            <nav>
+            {/* <nav>
                 {user && userRole === "Student" && <Link to="/student">Go to Student Page</Link>}
                 {user && userRole === "Teacher" && <Link to="/teacher">Go to Teacher Page</Link>}
                 {user && userRole === "Admin" && <Link to="/admin">Go to Admin Page</Link>}
                 {user && <Link to="/profile" style={{ marginLeft: '1rem' }}>Profile Settings</Link>}
             </nav>
-            <button onClick={() => { signOut(); navigate("/login"); }}>Logout</button>
+            <button onClick={() => { signOut(); navigate("/login"); }}>Logout</button> */}
         </div>
     );
 };

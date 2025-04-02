@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { addSchedule, updateSchedule, deleteSchedule } from '../api/student';
-import './ScheduleManager.css';
+import '../styles/ScheduleManager.css';
 
 const ScheduleManager = ({ schedules, studentId, onScheduleUpdate }) => {
     const [isAdding, setIsAdding] = useState(false);
@@ -138,6 +138,42 @@ const ScheduleManager = ({ schedules, studentId, onScheduleUpdate }) => {
         setIsAdding(false);
     };
 
+    // Helper function to organize schedules by day and sort by time
+    const getOrganizedSchedules = () => {
+        // Create an object with arrays for each day
+        const organizedSchedules = {
+            1: [], // Monday
+            2: [], // Tuesday
+            3: [], // Wednesday
+            4: [], // Thursday
+            5: [], // Friday
+            6: [], // Saturday
+            0: []  // Sunday
+        };
+        
+        // Group schedules by day of week
+        schedules.forEach(schedule => {
+            const day = typeof schedule.dayOfWeek === 'number' ? 
+                schedule.dayOfWeek : 
+                dayToEnum[schedule.dayOfWeek];
+                
+            if (organizedSchedules[day]) {
+                organizedSchedules[day].push(schedule);
+            }
+        });
+        
+        // Sort each day's schedules by start time
+        Object.keys(organizedSchedules).forEach(day => {
+            organizedSchedules[day].sort((a, b) => {
+                const timeA = a.startTime;
+                const timeB = b.startTime;
+                return timeA < timeB ? -1 : timeA > timeB ? 1 : 0;
+            });
+        });
+        
+        return organizedSchedules;
+    };
+
     return (
         <div className="schedule-manager">
             <h3>Schedule Management</h3>
@@ -227,27 +263,46 @@ const ScheduleManager = ({ schedules, studentId, onScheduleUpdate }) => {
                 </form>
             )}
 
-            <div className="schedule-list">
-                <h4>Current Schedule</h4>
+            <div className="schedule-view">
+                <h4>Weekly Schedule</h4>
                 {schedules.length > 0 ? (
-                    <ul>
-                        {schedules.map((item) => (
-                            <li key={item.id}>
-                                <div className="schedule-item">
-                                    <div>
-                                        <strong>{item.subject}</strong>
-                                        <p>{typeof item.dayOfWeek === 'number' ? enumToDay[item.dayOfWeek] : item.dayOfWeek} - {formatTimeDisplay(item.startTime)} to {formatTimeDisplay(item.endTime)}</p>
-                                        <p>Room: {item.room} | Semester: {item.semester}</p>
-                                        <p>Status: {item.isActive ? 'Active' : 'Inactive'}</p>
-                                    </div>
-                                    <div className="schedule-actions">
-                                        <button onClick={() => handleEdit(item)}>Edit</button>
-                                        <button onClick={() => handleDelete(item.id)}>Delete</button>
+                    <div className="weekly-schedule">
+                        {[1, 2, 3, 4, 5, 6, 0].map(dayNum => {
+                            const dayName = enumToDay[dayNum];
+                            const daySchedules = getOrganizedSchedules()[dayNum];
+                            
+                            return (
+                                <div className="day-column" key={dayNum}>
+                                    <h5 className="day-header">{dayName}</h5>
+                                    <div className="day-schedules">
+                                        {daySchedules.length > 0 ? (
+                                            daySchedules.map(item => (
+                                                <div 
+                                                    className={`schedule-block ${!item.isActive ? 'inactive' : ''}`} 
+                                                    key={item.id}
+                                                >
+                                                    <div className="schedule-time">
+                                                        {formatTimeDisplay(item.startTime)} - {formatTimeDisplay(item.endTime)}
+                                                    </div>
+                                                    <div className="schedule-content">
+                                                        <strong>{item.subject}</strong>
+                                                        <div>Room: {item.room}</div>
+                                                        <div>Semester: {item.semester}</div>
+                                                    </div>
+                                                    <div className="schedule-actions">
+                                                        <button onClick={() => handleEdit(item)}>Edit</button>
+                                                        <button onClick={() => handleDelete(item.id)}>Delete</button>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="no-schedule">No classes</div>
+                                        )}
                                     </div>
                                 </div>
-                            </li>
-                        ))}
-                    </ul>
+                            );
+                        })}
+                    </div>
                 ) : (
                     <p>No schedule available</p>
                 )}

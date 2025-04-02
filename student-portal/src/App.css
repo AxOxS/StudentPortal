@@ -36,3 +36,22 @@
     transform: rotate(360deg);
   }
 }
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding-top: 20px;
+  padding-bottom: 40px;
+}
+
+/* For pages without dashboard-container */
+.main-content > div:not(.dashboard-container) {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}

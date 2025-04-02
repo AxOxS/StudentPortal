@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Unauthorized from './pages/Unauthorized';
 import ProfilePage from './pages/ProfilePage';
+import Navbar from './components/navbar';
 
 //roles
 import StudentPage from './pages/StudentPage';
@@ -16,16 +17,22 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <Routes>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<PrivateRoute allowedRoles={['Student','Teacher', 'Admin']}><Dashboard /></PrivateRoute>} />
-          <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="/profile" element={<PrivateRoute allowedRoles={['Student','Teacher', 'Admin']}><ProfilePage /></PrivateRoute>} />
-          <Route path="/student" element={<PrivateRoute allowedRoles={['Student']}><StudentPage /></PrivateRoute>} />
-          <Route path="/teacher" element={<PrivateRoute allowedRoles={['Teacher']}><TeacherPage /></PrivateRoute>} />
-          <Route path="/admin" element={<PrivateRoute allowedRoles={['Admin']}><AdminPage /></PrivateRoute>} />
-        </Routes>
+        <div className="app-container">
+          <Navbar />
+          <main className="main-content">
+            <Routes>
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/dashboard" element={<PrivateRoute allowedRoles={['Student','Teacher', 'Admin']}><Dashboard /></PrivateRoute>} />
+              <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route path="/profile" element={<PrivateRoute allowedRoles={['Student','Teacher', 'Admin']}><ProfilePage /></PrivateRoute>} />
+              <Route path="/student" element={<PrivateRoute allowedRoles={['Student']}><StudentPage /></PrivateRoute>} />
+              <Route path="/teacher" element={<PrivateRoute allowedRoles={['Teacher']}><TeacherPage /></PrivateRoute>} />
+              <Route path="/admin" element={<PrivateRoute allowedRoles={['Admin']}><AdminPage /></PrivateRoute>} />
+              <Route path="/" element={<Dashboard />} />
+            </Routes>
+          </main>
+        </div>
       </Router>
     </AuthProvider>
   );
