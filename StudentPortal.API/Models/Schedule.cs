@@ -7,7 +7,7 @@ namespace StudentPortal.API.Models
         public int Id { get; set; }
 
         public int StudentId { get; set; }
-        public Student Student { get; set; }
+        public Student? Student { get; set; }
 
         [Required]
         [StringLength(100)]

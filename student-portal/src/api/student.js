@@ -58,3 +58,78 @@ export const deleteGrade = async (gradeId) => {
         }
     });
 };
+
+export const addSchedule = async (scheduleData) => {
+    const token = getToken();
+    
+    // Format data properly for the API
+    const formattedData = {
+        studentId: scheduleData.studentId,
+        subject: scheduleData.subject,
+        startTime: scheduleData.startTime + ":00", // Add seconds to match TimeSpan format
+        endTime: scheduleData.endTime + ":00",     // Add seconds to match TimeSpan format
+        dayOfWeek: scheduleData.dayOfWeek,
+        room: scheduleData.room,
+        semester: scheduleData.semester,
+        isActive: scheduleData.isActive
+    };
+    
+    console.log('Formatted data being sent:', formattedData);
+    
+    try {
+        const response = await axios.post(`${API_URL}/schedule`, formattedData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('Success response:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error in addSchedule:', error);
+        if (error.response) {
+            console.error('Response status:', error.response.status);
+            console.error('Response data:', error.response.data);
+            console.error('Response headers:', error.response.headers);
+        } else if (error.request) {
+            console.error('No response received:', error.request);
+        } else {
+            console.error('Error message:', error.message);
+        }
+        throw error;
+    }
+};
+
+export const updateSchedule = async (scheduleId, updatedData) => {
+    const token = getToken();
+    
+    // Only include required fields and format them properly
+    const formattedData = {
+        id: scheduleId,
+        studentId: updatedData.studentId,
+        subject: updatedData.subject,
+        startTime: updatedData.startTime + ":00", // Add seconds to match TimeSpan format
+        endTime: updatedData.endTime + ":00",     // Add seconds to match TimeSpan format
+        dayOfWeek: updatedData.dayOfWeek,
+        room: updatedData.room,
+        semester: updatedData.semester,
+        isActive: updatedData.isActive
+    };
+    
+    console.log('Formatted update data being sent:', formattedData);
+    
+    await axios.put(`${API_URL}/schedule/${scheduleId}`, formattedData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+};
+
+export const deleteSchedule = async (scheduleId) => {
+    const token = getToken();
+    await axios.delete(`${API_URL}/schedule/${scheduleId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+};
