@@ -49,9 +49,6 @@ const Navbar = () => {
                             <Link to="/admin" className={`navbar-link ${isActive('/admin')}`}>
                                 Admin Panel
                             </Link>
-                            <Link to="/users" className={`navbar-link ${isActive('/users')}`}>
-                                User Management
-                            </Link>
                         </>
                     )}
                 </div>

@@ -1,0 +1,225 @@
+* {
+    box-sizing: border-box;
+}
+
+.profile-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-header h2 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.profile-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 35px 40px;
+    margin-bottom: 30px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+}
+
+.profile-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+}
+
+.profile-info {
+    margin-bottom: 35px;
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 10px;
+    border-left: 5px solid #4285f4;
+}
+
+.profile-info h3 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.info-row {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #444;
+    width: 180px;
+    flex-shrink: 0;
+    font-size: 16px;
+}
+
+.info-value {
+    color: #333;
+    flex-grow: 1;
+    font-size: 16px;
+    background-color: white;
+    padding: 8px 15px;
+    border-radius: 6px;
+    border: 1px solid #eee;
+}
+
+/* Form Styling */
+.profile-form {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.form-section {
+    margin-bottom: 30px;
+    grid-column: span 1;
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.form-section:nth-child(1) {
+    border-left: 5px solid #34a853; /* Green for email section */
+}
+
+.form-section:nth-child(2) {
+    border-left: 5px solid #fbbc05; /* Yellow for password section */
+}
+
+.form-section h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: #444;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: #4285f4;
+    box-shadow: 0 0 0 3px rgba(66,133,244,0.15);
+    outline: none;
+}
+
+.submit-button {
+    background: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    grid-column: span 2;
+    justify-self: end;
+    margin-top: 10px;
+}
+
+.submit-button:hover {
+    background: #3367d6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+.submit-button:disabled {
+    background: #9bb9f3;
+    cursor: not-allowed;
+}
+
+/* Alert Messages */
+.alert {
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    border-radius: 6px;
+    font-size: 16px;
+    grid-column: span 2;
+}
+
+.alert-error {
+    background-color: #ffebee;
+    color: #d32f2f;
+    border-left: 4px solid #d32f2f;
+}
+
+.alert-success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid #2e7d32;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .profile-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-section,
+    .alert,
+    .submit-button {
+        grid-column: 1;
+    }
+    
+    .profile-card {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .info-label {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+    
+    .info-value {
+        width: 100%;
+    }
+    
+    .profile-card {
+        padding: 20px;
+    }
+} 

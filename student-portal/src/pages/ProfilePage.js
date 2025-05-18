@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import { getToken, getUserRole } from '../api/auth';
 import { useNavigate } from 'react-router-dom';
+import '../styles/ProfilePage.css';
 
 const ProfilePage = () => {
     const { user } = useContext(AuthContext);
@@ -173,70 +174,104 @@ const ProfilePage = () => {
     };
 
     return (
-        <div>
-            <h2>Profile Settings</h2>
-            
-            <div style={{ marginBottom: '2rem' }}>
-                <h3>User Information</h3>
-                <p><strong>ID:</strong> {userData.id}</p>
-                <p><strong>Role:</strong> {userData.role}</p>
-                <p><strong>Name:</strong> {userData.name}</p>
-                <p><strong>Current Email:</strong> {userData.email}</p>
+        <div className="profile-container">
+            <div className="profile-header">
+                <h2>Profile Settings</h2>
+                <p>Update your personal information and account settings</p>
             </div>
-
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="email">New Email:</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                    />
+            
+            <div className="profile-card">
+                <div className="profile-info">
+                    <h3>User Information</h3>
+                    
+                    <div className="info-row">
+                        <span className="info-label">ID:</span>
+                        <span className="info-value">{userData.id}</span>
+                    </div>
+                    
+                    <div className="info-row">
+                        <span className="info-label">Role:</span>
+                        <span className="info-value">{userData.role}</span>
+                    </div>
+                    
+                    <div className="info-row">
+                        <span className="info-label">Name:</span>
+                        <span className="info-value">{userData.name}</span>
+                    </div>
+                    
+                    <div className="info-row">
+                        <span className="info-label">Current Email:</span>
+                        <span className="info-value">{userData.email}</span>
+                    </div>
                 </div>
 
-                <h3>Change Password</h3>
-                <div>
-                    <label htmlFor="currentPassword">Current Password:</label>
-                    <input
-                        type="password"
-                        id="currentPassword"
-                        name="currentPassword"
-                        value={formData.currentPassword}
-                        onChange={handleChange}
-                    />
-                </div>
+                <form className="profile-form" onSubmit={handleSubmit}>
+                    <div className="form-section">
+                        <h3>Update Email</h3>
+                        <div className="form-group">
+                            <label htmlFor="email">New Email:</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                className="form-control"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="Enter new email address"
+                            />
+                        </div>
+                    </div>
 
-                <div>
-                    <label htmlFor="newPassword">New Password:</label>
-                    <input
-                        type="password"
-                        id="newPassword"
-                        name="newPassword"
-                        value={formData.newPassword}
-                        onChange={handleChange}
-                    />
-                </div>
+                    <div className="form-section">
+                        <h3>Change Password</h3>
+                        <div className="form-group">
+                            <label htmlFor="currentPassword">Current Password:</label>
+                            <input
+                                type="password"
+                                id="currentPassword"
+                                name="currentPassword"
+                                className="form-control"
+                                value={formData.currentPassword}
+                                onChange={handleChange}
+                                placeholder="Enter your current password"
+                            />
+                        </div>
 
-                <div>
-                    <label htmlFor="confirmPassword">Confirm New Password:</label>
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                    />
-                </div>
+                        <div className="form-group">
+                            <label htmlFor="newPassword">New Password:</label>
+                            <input
+                                type="password"
+                                id="newPassword"
+                                name="newPassword"
+                                className="form-control"
+                                value={formData.newPassword}
+                                onChange={handleChange}
+                                placeholder="Enter new password"
+                            />
+                        </div>
 
-                {error && <div style={{ color: 'red' }}>{error}</div>}
-                {success && <div style={{ color: 'green' }}>{success}</div>}
+                        <div className="form-group">
+                            <label htmlFor="confirmPassword">Confirm New Password:</label>
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                className="form-control"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                placeholder="Confirm new password"
+                            />
+                        </div>
+                    </div>
 
-                <button type="submit" disabled={loading}>
-                    {loading ? 'Updating...' : 'Update Profile'}
-                </button>
-            </form>
+                    {error && <div className="alert alert-error">{error}</div>}
+                    {success && <div className="alert alert-success">{success}</div>}
+
+                    <button type="submit" className="submit-button" disabled={loading}>
+                        {loading ? 'Updating...' : 'Update Profile'}
+                    </button>
+                </form>
+            </div>
         </div>
     );
 };
