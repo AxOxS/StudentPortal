@@ -282,12 +282,13 @@ const ScheduleManager = ({ schedules, studentId, onScheduleUpdate }) => {
                                                     key={item.id}
                                                 >
                                                     <div className="schedule-time">
+                                                        <span className="time-icon">⏰</span>
                                                         {formatTimeDisplay(item.startTime)} - {formatTimeDisplay(item.endTime)}
                                                     </div>
                                                     <div className="schedule-content">
                                                         <strong>{item.subject}</strong>
-                                                        <div>Room: {item.room}</div>
-                                                        <div>Semester: {item.semester}</div>
+                                                        <div><span className="content-icon">🏢</span> {item.room}</div>
+                                                        <div><span className="content-icon">📅</span> {item.semester}</div>
                                                     </div>
                                                     <div className="schedule-actions">
                                                         <button onClick={() => handleEdit(item)}>Edit</button>

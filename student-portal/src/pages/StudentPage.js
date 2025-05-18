@@ -3,6 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import { getGrades, getSchedule, getStudentByUserId } from "../api/student";
 import ScheduleManager from "../components/ScheduleManager";
 import '../styles/Dashboard.css';
+import '../styles/StudentPage.css';
 
 
 const StudentPage = () => {
@@ -20,7 +21,8 @@ const StudentPage = () => {
             if (!groupedGrades[grade.subject]) {
                 groupedGrades[grade.subject] = [];
             }
-            groupedGrades[grade.subject].push(grade.score);
+            // Store the full grade object instead of just the score
+            groupedGrades[grade.subject].push(grade);
         });
         return groupedGrades;
     };
@@ -72,6 +74,11 @@ const StudentPage = () => {
         return 'grade-f';
     };
     
+    // Function to get grade type text
+    const getGradeTypeText = (type) => {
+        const types = ["Homework", "Quiz", "Exam", "Project", "Participation", "Final Exam"];
+        return types[type] || "Unknown";
+    };
 
     if (loading) return <div className="dashboard-container"><div className="dashboard-card">Loading...</div></div>;
     if (error) return <div className="dashboard-container"><div className="dashboard-card" style={{ borderLeft: '5px solid #f44336' }}>{error}</div></div>;
@@ -81,7 +88,8 @@ const StudentPage = () => {
 
     // Calculate average grade for each subject
     const subjectAverages = {};
-    Object.entries(groupedGrades).forEach(([subject, scores]) => {
+    Object.entries(groupedGrades).forEach(([subject, gradeObjects]) => {
+        const scores = gradeObjects.map(grade => grade.score);
         const sum = scores.reduce((total, score) => total + score, 0);
         subjectAverages[subject] = Math.round(sum / scores.length);
     });
@@ -139,17 +147,22 @@ const StudentPage = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {Object.entries(groupedGrades).map(([subject, scores]) => (
+                                {Object.entries(groupedGrades).map(([subject, gradeObjects]) => (
                                     <tr key={subject}>
                                         <td><strong>{subject}</strong></td>
                                         <td>
-                                            {scores.map((score, index) => (
+                                            {gradeObjects.map((grade, index) => (
                                                 <span 
                                                     key={index} 
-                                                    className={`grade-score ${getGradeColorClass(score)}`}
-                                                    style={{margin: '0 4px'}}
+                                                    className={`grade-score ${getGradeColorClass(grade.score)}`}
+                                                    style={{cursor: 'help'}}
+                                                    title={`Type: ${getGradeTypeText(grade.gradeType)}
+Date: ${new Date(grade.date).toLocaleDateString()}
+Semester: ${grade.semester}
+Score: ${grade.score}/${grade.maxScore}
+${grade.comments ? `Comments: ${grade.comments}` : 'No comments'}`}
                                                 >
-                                                    {score}
+                                                    {grade.score}
                                                 </span>
                                             ))}
                                         </td>

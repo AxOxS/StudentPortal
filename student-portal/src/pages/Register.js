@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import '../styles/Auth.css';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -41,32 +42,76 @@ const Register = () => {
     };
 
     return (
-        <div>
-            <h2>Register</h2>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Name:</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+        <div className="auth-container">
+            <div className="auth-card">
+                <div className="auth-header">
+                    <h2>Create Account</h2>
+                    <p>Sign up to get started with the student portal</p>
                 </div>
-                <div>
-                    <label>Email:</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+                
+                {error && <div className="error-message">{error}</div>}
+                
+                <form className="auth-form" onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label htmlFor="name">Full Name</label>
+                        <input 
+                            id="name"
+                            type="text" 
+                            name="name" 
+                            placeholder="Enter your full name"
+                            value={formData.name} 
+                            onChange={handleChange} 
+                            required 
+                        />
+                    </div>
+                    
+                    <div className="form-group">
+                        <label htmlFor="email">Email</label>
+                        <input 
+                            id="email"
+                            type="email" 
+                            name="email" 
+                            placeholder="Enter your email"
+                            value={formData.email} 
+                            onChange={handleChange} 
+                            required 
+                        />
+                    </div>
+                    
+                    <div className="form-group">
+                        <label htmlFor="password">Password</label>
+                        <input 
+                            id="password"
+                            type="password" 
+                            name="passwordHash" 
+                            placeholder="Create a password"
+                            value={formData.passwordHash} 
+                            onChange={handleChange} 
+                            required 
+                        />
+                    </div>
+                    
+                    <div className="form-group">
+                        <label htmlFor="role">Role</label>
+                        <select 
+                            id="role"
+                            name="role" 
+                            value={formData.role} 
+                            onChange={handleChange}
+                        >
+                            <option value="Student">Student</option>
+                            <option value="Teacher">Teacher</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                    
+                    <button className="auth-button" type="submit">Create Account</button>
+                </form>
+                
+                <div className="auth-footer">
+                    <p>Already have an account? <Link to="/login">Sign In</Link></p>
                 </div>
-                <div>
-                    <label>Password:</label>
-                    <input type="password" name="passwordHash" value={formData.passwordHash} onChange={handleChange} required />
-                </div>
-                <div>
-                    <label>Role:</label>
-                    <select name="role" value={formData.role} onChange={handleChange}>
-                        <option value="Student">Student</option>
-                        <option value="Teacher">Teacher</option>
-                        <option value="Admin">Admin</option>
-                    </select>
-                </div>
-                <button type="submit">Register</button>
-            </form>
+            </div>
         </div>
     );
 };

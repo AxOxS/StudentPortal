@@ -1,0 +1,145 @@
+/* StudentPage specific styles */
+
+.grades-table-container {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.grades-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.grades-table thead {
+    background-color: #f8f9fa;
+}
+
+.grades-table th, .grades-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.grades-table tr:last-child td {
+    border-bottom: none;
+}
+
+.grades-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Grade score styling - now with colored text instead of background */
+.grade-score {
+    display: inline-block;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 4px 8px;
+    margin: 0 4px;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    background-color: white;
+}
+
+.grade-a {
+    color: #4CAF50; /* Green for A grades (9-10) */
+}
+
+.grade-b {
+    color: #8BC34A; /* Light green for B grades (8-8.9) */
+}
+
+.grade-c {
+    color: #FFC107; /* Amber for C grades (6-7.9) */
+}
+
+.grade-d {
+    color: #FF9800; /* Orange for D grades (5-5.9) */
+}
+
+.grade-f {
+    color: #F44336; /* Red for F grades (below 5) */
+}
+
+/* Student info styling */
+.profile-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 20px;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    position: relative;
+    border-radius: 50%;
+    padding: 6px;
+    background: linear-gradient(145deg, #4285f4, #34a853);
+    box-shadow: 0 6px 16px rgba(66, 133, 244, 0.25);
+}
+
+.profile-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(145deg, rgba(66, 133, 244, 0.2), rgba(52, 168, 83, 0.2));
+    z-index: 1;
+    pointer-events: none;
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid white;
+}
+
+.profile-details {
+    flex: 1;
+    min-width: 300px;
+}
+
+.profile-detail {
+    margin-bottom: 15px;
+}
+
+.profile-detail label {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.profile-detail span {
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* No schedule/grades message */
+.no-schedule {
+    text-align: center;
+    padding: 30px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .profile-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .profile-details {
+        width: 100%;
+    }
+} 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { updateGrade, deleteGrade } from "../api/student";
 import { getToken } from "../api/auth";
+import '../styles/TeacherPage.css';
 
 const TeacherPage = () => {
     const [grades, setGrades] = useState([]);
@@ -114,6 +115,7 @@ const TeacherPage = () => {
                 });
                 alert("Grade updated!");
                 fetchGradesForStudent(editingGrade.studentId);
+                cancelEdit(); // Reset form after successful update
             } catch (err) {
                 const errorMessage = err.response?.data?.message || err.message;
                 setError(errorMessage);
@@ -202,13 +204,15 @@ const TeacherPage = () => {
     };
 
     const handleDelete = async (id, gradeStudentId) => {
-        try {
-            await deleteGrade(id);
-            alert("Grade deleted!");
-            fetchGradesForStudent(gradeStudentId);
-        } catch (err) {
-            alert("Failed to delete grade");
-            console.error(err);
+        if (window.confirm("Are you sure you want to delete this grade?")) {
+            try {
+                await deleteGrade(id);
+                alert("Grade deleted!");
+                fetchGradesForStudent(gradeStudentId);
+            } catch (err) {
+                alert("Failed to delete grade");
+                console.error(err);
+            }
         }
     };
 
@@ -222,96 +226,154 @@ const TeacherPage = () => {
         setComments("");
     };
 
-    return (
-        <div>
-            <h2>Teacher Dashboard</h2>
+    // Function to get grade type text
+    const getGradeTypeText = (type) => {
+        const types = ["Homework", "Quiz", "Exam", "Project", "Participation", "Final Exam"];
+        return types[type] || "Unknown";
+    };
 
-            {/* Search Student Grades */}
-            <h3>Find Student Grades</h3>
-            <div>
-                <input 
-                    type="text" 
-                    placeholder="Enter Student ID" 
-                    value={studentId} 
-                    onChange={(e) => setStudentId(e.target.value)} 
-                />
-                <button onClick={handleSearch}>Search</button>
+    return (
+        <div className="teacher-container">
+            <div className="teacher-header">
+                <h2>Teacher Dashboard</h2>
             </div>
 
-            {loading && <p>Loading...</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {/* Search Student Grades */}
+            <div className="teacher-section">
+                <h3>Find Student Grades</h3>
+                <div className="search-container">
+                    <input 
+                        className="search-input"
+                        type="text" 
+                        placeholder="Enter Student ID" 
+                        value={studentId} 
+                        onChange={(e) => setStudentId(e.target.value)} 
+                    />
+                    <button className="search-button" onClick={handleSearch}>Search</button>
+                </div>
+
+                {loading && <p className="loading-message">Loading...</p>}
+                {error && <p className="error-message">{error}</p>}
+            </div>
 
             {/* Add/Edit Grade Form */}
             {studentId && (
-                <>
+                <div className="teacher-section">
                     <h3>{editingGrade ? "Edit Grade" : "Add Grade"}</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '300px' }}>
+                    <div className="grade-form">
                         {!editingGrade && (
-                            <span>Adding grade for Student ID: {studentId}</span>
+                            <p>Adding grade for Student ID: {studentId}</p>
                         )}
+                        
+                        <div className="form-row">
+                            <input 
+                                className="form-field"
+                                type="text" 
+                                placeholder="Subject" 
+                                value={subject} 
+                                onChange={(e) => setSubject(e.target.value)} 
+                            />
+                            
+                            <select 
+                                className="form-field form-field-select"
+                                value={gradeType} 
+                                onChange={(e) => setGradeType(e.target.value)}
+                            >
+                                <option value="0">Homework</option>
+                                <option value="1">Quiz</option>
+                                <option value="2">Exam</option>
+                                <option value="3">Project</option>
+                                <option value="4">Participation</option>
+                                <option value="5">Final Exam</option>
+                            </select>
+                        </div>
+                        
+                        <div className="form-row">
+                            <input 
+                                className="form-field"
+                                type="number" 
+                                placeholder="Score" 
+                                value={score} 
+                                onChange={(e) => setScore(e.target.value)} 
+                            />
+                            
+                            <input 
+                                className="form-field"
+                                type="number" 
+                                placeholder="Max Score" 
+                                value={maxScore} 
+                                onChange={(e) => setMaxScore(e.target.value)} 
+                            />
+                        </div>
+                        
                         <input 
-                            type="text" 
-                            placeholder="Subject" 
-                            value={subject} 
-                            onChange={(e) => setSubject(e.target.value)} 
-                        />
-                        <input 
-                            type="number" 
-                            placeholder="Score" 
-                            value={score} 
-                            onChange={(e) => setScore(e.target.value)} 
-                        />
-                        <input 
-                            type="number" 
-                            placeholder="Max Score" 
-                            value={maxScore} 
-                            onChange={(e) => setMaxScore(e.target.value)} 
-                        />
-                        <select 
-                            value={gradeType} 
-                            onChange={(e) => setGradeType(e.target.value)}
-                        >
-                            <option value="0">Homework</option>
-                            <option value="1">Quiz</option>
-                            <option value="2">Exam</option>
-                            <option value="3">Project</option>
-                            <option value="4">Participation</option>
-                            <option value="5">Final Exam</option>
-                        </select>
-                        <input 
+                            className="form-field"
                             type="text" 
                             placeholder="Semester (e.g., 2024-1)" 
                             value={semester} 
                             onChange={(e) => setSemester(e.target.value)} 
                         />
+                        
                         <textarea 
+                            className="form-field form-textarea"
                             placeholder="Comments (optional)" 
                             value={comments} 
                             onChange={(e) => setComments(e.target.value)}
                             rows={3}
                         />
-                        <button onClick={handleUpdateGrade}>
-                            {editingGrade ? "Update Grade" : "Add Grade"}
-                        </button>
-                        {editingGrade && <button onClick={cancelEdit}>Cancel</button>}
+                        
+                        <div className="form-actions">
+                            <button className="form-button" onClick={handleUpdateGrade}>
+                                {editingGrade ? "Update Grade" : "Add Grade"}
+                            </button>
+                            
+                            {editingGrade && (
+                                <button className="form-button secondary" onClick={cancelEdit}>
+                                    Cancel
+                                </button>
+                            )}
+                        </div>
                     </div>
-                </>
+                </div>
             )}
 
             {/* Display Grades */}
             {grades.length > 0 && (
-                <>
+                <div className="teacher-section">
                     <h3>Grades for Student ID: {grades[0]?.studentId}</h3>
-                    <ul>
+                    <ul className="grades-list">
                         {grades.map((grade) => (
-                            <li key={grade.id}>
-                                {grade.subject} - {grade.score}/{grade.maxScore} ({grade.gradeType}) 
-                                <button onClick={() => handleEdit(grade)}>Edit</button>
-                                <button onClick={() => handleDelete(grade.id, grade.studentId)}>Delete</button>
+                            <li key={grade.id} className="grade-item">
+                                <div className="grade-info">
+                                    <div className="grade-subject">{grade.subject}</div>
+                                    <div className="grade-details">
+                                        <span className="grade-score">{grade.score}/{grade.maxScore}</span>
+                                        <span className="grade-type">{getGradeTypeText(grade.gradeType)}</span>
+                                        {grade.comments && (
+                                            <div>
+                                                <small>Comments: {grade.comments}</small>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="grade-actions">
+                                    <button className="grade-button edit" onClick={() => handleEdit(grade)}>
+                                        Edit
+                                    </button>
+                                    <button className="grade-button delete" onClick={() => handleDelete(grade.id, grade.studentId)}>
+                                        Delete
+                                    </button>
+                                </div>
                             </li>
                         ))}
                     </ul>
-                </>
+                </div>
+            )}
+            
+            {studentId && grades.length === 0 && !loading && (
+                <div className="teacher-section">
+                    <p className="no-results">No grades found for this student.</p>
+                </div>
             )}
         </div>
     );
