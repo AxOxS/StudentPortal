@@ -35,7 +35,7 @@ Sistema optimizuota ir kompiuteriams, ir mobiliesiems įrenginiams, todėl galit
 2. Prisijungimo puslapyje įveskite savo el. pašto adresą ir slaptažodį
 3. Spauskite mygtuką "Sign In"
 
-![Prisijungimo puslapis](..\pictures\login.png)
+![Prisijungimo puslapis](../pictures/login.png)
 
 ## Studentų funkcionalumas
 
