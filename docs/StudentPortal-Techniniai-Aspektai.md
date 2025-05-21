@@ -1,6 +1,6 @@
 [← Grįžti į dokumentacijos pradžią](../README.md)
 
-# Studentų Informacinės Sistemos Techniniai Aspektai
+# Studentų Sistemos Techniniai Aspektai
 
 ## Turinys
 1. [Duomenų bazės schema](#duomenų-bazės-schema)
