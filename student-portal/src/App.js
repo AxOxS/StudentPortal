@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './routes/PrivateRoute';
+import PublicRoute from './routes/PublicRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -21,8 +22,16 @@ function App() {
           <Navbar />
           <main className="main-content">
             <Routes>
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={
+                <PublicRoute>
+                  <Register />
+                </PublicRoute>
+              } />
+              <Route path="/login" element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              } />
               <Route path="/dashboard" element={<PrivateRoute allowedRoles={['Student','Teacher', 'Admin']}><Dashboard /></PrivateRoute>} />
               <Route path="/unauthorized" element={<Unauthorized />} />
               <Route path="/profile" element={<PrivateRoute allowedRoles={['Student','Teacher', 'Admin']}><ProfilePage /></PrivateRoute>} />

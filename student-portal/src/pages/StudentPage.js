@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { getGrades, getSchedule, getStudentByUserId } from "../api/student";
+import { getToken, getUserRole } from "../api/auth";
+import axios from "axios";
 import ScheduleManager from "../components/ScheduleManager";
 import '../styles/Dashboard.css';
 import '../styles/StudentPage.css';
@@ -31,13 +33,32 @@ const StudentPage = () => {
         if (user) {
             try {
                 console.log('Current user:', user);
-                // First get the student record using the user's ID
+                const token = getToken();
+                const userInfo = getUserRole();
+
+                // First get the user information
+                const userResponse = await axios.get(`http://localhost:5267/api/users/${userInfo.id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                console.log('User details:', userResponse.data);
+
+                // Then get the student record
                 const studentData = await getStudentByUserId(user.id);
                 console.log('Found student info:', studentData);
                 
                 if (studentData) {
-                    setStudentInfo(studentData);
-                    // Now use the student's ID to fetch grades and schedule
+                    // Combine user and student data
+                    const combinedInfo = {
+                        ...studentData,
+                        firstName: userResponse.data.name.split(' ')[0],
+                        lastName: userResponse.data.name.split(' ').length > 1 ? userResponse.data.name.split(' ')[1] : "",
+                        email: userResponse.data.email
+                    };
+                    setStudentInfo(combinedInfo);
+
+                    // Fetch grades and schedule
                     const [gradesData, scheduleData] = await Promise.all([
                         getGrades(studentData.id),
                         getSchedule(studentData.id)
@@ -94,6 +115,14 @@ const StudentPage = () => {
         subjectAverages[subject] = Math.round(sum / scores.length);
     });
 
+    // Calculate overall grade average
+    const calculateOverallAverage = () => {
+        const averages = Object.values(subjectAverages);
+        if (averages.length === 0) return "N/A";
+        const sum = averages.reduce((total, avg) => total + avg, 0);
+        return Math.round(sum / averages.length);
+    };
+
     return (
         <div className="dashboard-container">
             <div className="dashboard-header">
@@ -123,8 +152,10 @@ const StudentPage = () => {
                                 <span>{studentInfo.email}</span>
                             </div>
                             <div className="profile-detail">
-                                <label>Grade Level</label>
-                                <span>{studentInfo.gradeLevel || "N/A"}</span>
+                                <label>Grade Average</label>
+                                <span className={`grade-score ${getGradeColorClass(calculateOverallAverage())}`}>
+                                    {calculateOverallAverage()}
+                                </span>
                             </div>
                         </div>
                     </div>

@@ -5,8 +5,19 @@ const PrivateRoute = ({ children, allowedRoles }) => {
     const token = getToken();
     const userRole = getUserRole();
 
-    if (!token || !userRole || !allowedRoles.includes(userRole.role)) {
-        return <Navigate to="/unauthorized" />;
+    // If no token, redirect to login
+    if (!token) {
+        return <Navigate to="/login" replace />;
+    }
+
+    // If token exists but no user role (invalid token), redirect to login
+    if (!userRole) {
+        return <Navigate to="/login" replace />;
+    }
+
+    // If token and role exist but role is not allowed, redirect to unauthorized
+    if (!allowedRoles.includes(userRole.role)) {
+        return <Navigate to="/unauthorized" replace />;
     }
 
     return children;

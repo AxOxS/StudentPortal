@@ -23,12 +23,26 @@ namespace StudentPortal.API.Controllers
             _context = context; //Store the injected context for the future (CRUD operations)
         }
 
-        //Retrieve all students, handle GET /api/students
+        //Retrieve all students with their user information
         [HttpGet]
         public async Task<IActionResult> GetStudents()
         {
-            var students = await _context.Students.Include(s => s.Grades).ToListAsync(); //Fetches all the students from the DB and use include to load related grades.
-            return Ok(students); //returns 200ok with the data
+            var students = await _context.Students
+                .Include(s => s.User)  // Include User information
+                .Include(s => s.Grades)
+                .Select(s => new {
+                    s.Id,
+                    s.UserId,
+                    FirstName = s.User.Name.Split(' ')[0],  // Get first name from User's Name
+                    LastName = s.User.Name.Split(' ').Length > 1 ? s.User.Name.Split(' ')[1] : "",  // Get last name if exists
+                    Email = s.User.Email,
+                    s.User.Role,
+                    GradeAverage = s.Grades.Any() ? Math.Round(s.Grades.Average(g => g.Score), 2) : null,
+                    s.Grades
+                })
+                .ToListAsync();
+
+            return Ok(students);
         }
 
         //Add new students Post /api/students

@@ -1,11 +1,12 @@
 import React, { useContext } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
     const { user, signOut } = useContext(AuthContext);
     const location = useLocation();
+    const navigate = useNavigate();
 
     if (!user) return null; // Don't render navbar if not logged in
     
@@ -14,6 +15,11 @@ const Navbar = () => {
     // Check if a path is active
     const isActive = (path) => {
         return location.pathname === path ? 'active' : '';
+    };
+
+    const handleLogout = () => {
+        signOut();
+        navigate('/login', { replace: true });
     };
     
     return (
@@ -61,7 +67,7 @@ const Navbar = () => {
                         </button>
                         <div className="dropdown-content">
                             <Link to="/profile" className="dropdown-item">Profile Settings</Link>
-                            <button onClick={() => signOut()} className="dropdown-item">
+                            <button onClick={handleLogout} className="dropdown-item">
                                 Logout
                             </button>
                         </div>
