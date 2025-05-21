@@ -1,4 +1,4 @@
-# Studentų Informacinės Sistemos Dokumentacija
+# Studentų Sistemos Dokumentacija
 
 ## Turinys
 
@@ -43,10 +43,4 @@
 
 3. **Vartotojo vadovas** - Išsamiai aprašo, kaip naudotis sistema skirtingiems vartotojų tipams (studentams, dėstytojams, administratoriams).
 
-### Navigacija
-
-Galite naudoti turinį naršymui tarp skirtingų dokumentacijos dalių. Kiekvienos dalies nuorodos nukreips jus į atitinkamą dokumentą ir jo skyrių.
-
 ---
-
-*© 2024 StudentPortal. Visos teisės saugomos.* 
