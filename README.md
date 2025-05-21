@@ -1,141 +1,52 @@
-# StudentPortal
+# Studentų Informacinės Sistemos Dokumentacija
 
-A comprehensive student management system with a React frontend and .NET Core backend.
+## Turinys
 
-## Project Overview
+### [1. Sistemos pristatymas](docs/StudentPortal-Pristatymas.md)
+- [1.1. Sistemos aprašymas](docs/StudentPortal-Pristatymas.md#sistemos-aprašymas)
+- [1.2. Sistemos architektūra](docs/StudentPortal-Pristatymas.md#sistemos-architektūra)
+- [1.3. Naudotos technologijos](docs/StudentPortal-Pristatymas.md#naudotos-technologijos)
+- [1.4. Sistemos funkcionalumas](docs/StudentPortal-Pristatymas.md#sistemos-funkcionalumas)
+- [1.5. Duomenų modelis](docs/StudentPortal-Pristatymas.md#duomenų-modelis)
+- [1.6. API sąsaja](docs/StudentPortal-Pristatymas.md#api-sąsaja)
+- [1.7. Vartotojo sąsaja](docs/StudentPortal-Pristatymas.md#vartotojo-sąsaja)
+- [1.8. Autentifikacija ir autorizacija](docs/StudentPortal-Pristatymas.md#autentifikacija-ir-autorizacija)
+- [1.9. Sistemos diegimas](docs/StudentPortal-Pristatymas.md#sistemos-diegimas)
+- [1.10. Sistemos testavimas](docs/StudentPortal-Pristatymas.md#sistemos-testavimas)
+- [1.11. Išvados ir pasiūlymai](docs/StudentPortal-Pristatymas.md#išvados-ir-pasiūlymai)
 
-The StudentPortal is a full-stack web application designed to manage student information, courses, and academic records. It consists of:
+### [2. Techniniai aspektai](docs/StudentPortal-Techniniai-Aspektai.md)
+- [2.1. Duomenų bazės schema](docs/StudentPortal-Techniniai-Aspektai.md#duomenų-bazės-schema)
+- [2.2. API dokumentacija](docs/StudentPortal-Techniniai-Aspektai.md#api-dokumentacija)
+- [2.3. Front-end komponentų struktūra](docs/StudentPortal-Techniniai-Aspektai.md#front-end-komponentų-struktūra)
+- [2.4. Saugumo užtikrinimas](docs/StudentPortal-Techniniai-Aspektai.md#saugumo-užtikrinimas)
+- [2.5. Testavimo metodika](docs/StudentPortal-Techniniai-Aspektai.md#testavimo-metodika)
+- [2.6. Našumo optimizavimas](docs/StudentPortal-Techniniai-Aspektai.md#našumo-optimizavimas)
+- [2.7. Kodo pavyzdžiai](docs/StudentPortal-Techniniai-Aspektai.md#kodo-pavyzdžiai)
 
-- **Frontend**: React application with React Router for navigation and Tailwind CSS for styling
-- **Backend**: .NET 8 API with Entity Framework Core for database operations and JWT authentication
+### [3. Vartotojo vadovas](docs/StudentPortal-Vartotojo-Vadovas.md)
+- [3.1. Įvadas](docs/StudentPortal-Vartotojo-Vadovas.md#įvadas)
+- [3.2. Sistemos reikalavimai](docs/StudentPortal-Vartotojo-Vadovas.md#sistemos-reikalavimai)
+- [3.3. Prisijungimas prie sistemos](docs/StudentPortal-Vartotojo-Vadovas.md#prisijungimas-prie-sistemos)
+- [3.4. Studentų funkcionalumas](docs/StudentPortal-Vartotojo-Vadovas.md#studentų-funkcionalumas)
+- [3.5. Dėstytojų funkcionalumas](docs/StudentPortal-Vartotojo-Vadovas.md#dėstytojų-funkcionalumas)
+- [3.6. Administratoriaus funkcionalumas](docs/StudentPortal-Vartotojo-Vadovas.md#administratoriaus-funkcionalumas)
+- [3.7. Dažniausiai užduodami klausimai (DUK)](docs/StudentPortal-Vartotojo-Vadovas.md#dažniausiai-užduodami-klausimai-duk)
 
-## Technologies Used
+## Dokumentacijos naudojimas
 
-### Frontend
-- React 19
-- React Router 7
-- Axios for API requests
-- Tailwind CSS for styling
-- JWT handling for authentication
+Ši dokumentacija sudaryta iš trijų pagrindinių dalių:
 
-### Backend
-- .NET 8
-- Entity Framework Core 9 with SQL Server
-- JWT Authentication
-- BCrypt for password hashing
-- Swagger for API documentation
+1. **Sistemos pristatymas** - Apžvelgia sistemą aukštu lygiu, supažindina su jos funkcijomis, architektūra ir technologijomis.
 
-## Prerequisites
+2. **Techniniai aspektai** - Pateikia išsamią techninę informaciją apie sistemą, įskaitant duomenų bazės schemą, API dokumentaciją ir kodo pavyzdžius.
 
-- [Node.js](https://nodejs.org/) (v18 or later)
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) (or SQL Server Express)
-- IDE of your choice (Visual Studio, VS Code, etc.)
+3. **Vartotojo vadovas** - Išsamiai aprašo, kaip naudotis sistema skirtingiems vartotojų tipams (studentams, dėstytojams, administratoriams).
 
-## Project Setup
+### Navigacija
 
-### Backend Setup
+Galite naudoti turinį naršymui tarp skirtingų dokumentacijos dalių. Kiekvienos dalies nuorodos nukreips jus į atitinkamą dokumentą ir jo skyrių.
 
-1. Navigate to the API project directory:
-   ```
-   cd StudentPortal.API
-   ```
+---
 
-2. Create your configuration files:
-   - Copy appsettings.template.json to appsettings.json
-   - Copy secrets.json.example to secrets.json (or use dotnet user-secrets)
-   - Update the database connection string and JWT settings in both files
-
-3. Apply database migrations:
-   ```
-   dotnet ef database update
-   ```
-
-4. Run the API:
-   ```
-   dotnet run
-   ```
-   The API will be available at https://localhost:7001 (HTTPS) or http://localhost:5155 (HTTP)
-
-### Frontend Setup
-
-1. Navigate to the frontend project directory:
-   ```
-   cd student-portal
-   ```
-
-2. Create your environment configuration:
-   ```
-   cp .env.example .env
-   ```
-   Then update the values in `.env` as needed.
-
-3. Install dependencies:
-   ```
-   npm install
-   ```
-
-4. Start the development server:
-   ```
-   npm start
-   ```
-   The application will be available at http://localhost:3000
-
-## Configuration
-
-### Backend Configuration
-
-Create an `appsettings.json` file based on the template provided:
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
-
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=YOUR_SERVER;Database=YOUR_DATABASE;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
-  },
-
-  "Jwt": {
-    "Key": "YOUR_JWT_KEY_HERE",
-    "Issuer": "YOUR_ISSUER",
-    "Audience": "YOUR_AUDIENCE"
-  }
-}
-```
-
-For security, generate a strong random key for the JWT:Key parameter.
-
-### Frontend Configuration
-
-The frontend is configured to connect to the backend API running on the default ports. If you need to change the API URL, update the axios configuration in the application.
-
-## Development Workflow
-
-1. Run both frontend and backend applications
-2. Make changes to the codebase as needed
-3. Test your changes locally
-4. Commit and push to your repository
-
-## Version Control
-
-This project includes a `.gitattributes` file to ensure consistent line endings across different operating systems and to properly handle binary files. This helps prevent unnecessary merge conflicts and ensures proper handling of different file types.
-
-## Building for Production
-
-### Backend
-```
-cd StudentPortal.API
-dotnet publish -c Release
-```
-
-### Frontend
-```
-cd student-portal
-npm run build
-```
+*© 2024 StudentPortal. Visos teisės saugomos.* 
