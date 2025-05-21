@@ -14,6 +14,7 @@ const ScheduleManager = ({ schedules, studentId, onScheduleUpdate }) => {
         semester: '',
         isActive: true
     });
+    const [validationError, setValidationError] = useState('');
 
     // Define days of week to match C# DayOfWeek enum (Sunday=0, Monday=1, etc.)
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -46,6 +47,12 @@ const ScheduleManager = ({ schedules, studentId, onScheduleUpdate }) => {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
+        setValidationError(''); // Clear any validation errors when input changes
+    };
+
+    // Helper function to check if two time ranges overlap
+    const checkTimeOverlap = (startTime1, endTime1, startTime2, endTime2) => {
+        return (startTime1 < endTime2 && startTime2 < endTime1);
     };
 
     const handleSubmit = async (e) => {
@@ -53,6 +60,41 @@ const ScheduleManager = ({ schedules, studentId, onScheduleUpdate }) => {
         try {
             // Convert day name to enum number (0-6)
             const dayOfWeekNumber = dayToEnum[formData.dayOfWeek];
+            
+            // Validate that end time is after start time
+            if (formData.startTime >= formData.endTime) {
+                setValidationError("End time must be after start time");
+                return;
+            }
+            
+            // Check for time conflicts with existing schedules on the same day
+            const conflictingSchedules = schedules.filter(schedule => {
+                // Skip check against the schedule being edited
+                if (editingSchedule && schedule.id === editingSchedule.id) {
+                    return false;
+                }
+                
+                // Check if on same day
+                const scheduleDay = typeof schedule.dayOfWeek === 'number' ? 
+                    schedule.dayOfWeek : dayToEnum[schedule.dayOfWeek];
+                
+                if (scheduleDay === dayOfWeekNumber) {
+                    // Check if time slots overlap
+                    const newStartTime = formData.startTime;
+                    const newEndTime = formData.endTime;
+                    const existingStartTime = formatTimeDisplay(schedule.startTime);
+                    const existingEndTime = formatTimeDisplay(schedule.endTime);
+                    
+                    return checkTimeOverlap(newStartTime, newEndTime, existingStartTime, existingEndTime);
+                }
+                
+                return false;
+            });
+            
+            if (conflictingSchedules.length > 0) {
+                setValidationError(`Time conflict with existing lesson: ${conflictingSchedules[0].subject} (${formatTimeDisplay(conflictingSchedules[0].startTime)} - ${formatTimeDisplay(conflictingSchedules[0].endTime)})`);
+                return;
+            }
             
             const scheduleData = {
                 ...formData,
@@ -136,6 +178,7 @@ const ScheduleManager = ({ schedules, studentId, onScheduleUpdate }) => {
         });
         setEditingSchedule(null);
         setIsAdding(false);
+        setValidationError(''); // Clear validation errors
     };
 
     // Helper function to organize schedules by day and sort by time
@@ -182,6 +225,9 @@ const ScheduleManager = ({ schedules, studentId, onScheduleUpdate }) => {
                 <button onClick={() => setIsAdding(true)}>Add New Schedule</button>
             ) : (
                 <form onSubmit={handleSubmit} className="schedule-form">
+                    {validationError && (
+                        <div className="validation-error">{validationError}</div>
+                    )}
                     <div>
                         <label>Subject:</label>
                         <input
