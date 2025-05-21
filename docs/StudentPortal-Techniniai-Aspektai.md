@@ -21,11 +21,10 @@
 ```sql
 CREATE TABLE Users (
     Id INT PRIMARY KEY IDENTITY(1,1),
-    Email NVARCHAR(100) UNIQUE NOT NULL,
+    Name NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(255) UNIQUE NOT NULL,
     PasswordHash NVARCHAR(255) NOT NULL,
-    Role NVARCHAR(20) NOT NULL,
-    CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
-    LastLogin DATETIME NULL
+    Role NVARCHAR(20) NOT NULL
 );
 ```
 
@@ -33,25 +32,9 @@ CREATE TABLE Users (
 ```sql
 CREATE TABLE Students (
     Id INT PRIMARY KEY IDENTITY(1,1),
-    UserId INT FOREIGN KEY REFERENCES Users(Id) ON DELETE CASCADE,
-    FirstName NVARCHAR(50) NOT NULL,
-    LastName NVARCHAR(50) NOT NULL,
-    StudentNumber NVARCHAR(20) UNIQUE NOT NULL,
-    EnrollmentDate DATETIME NOT NULL,
-    Faculty NVARCHAR(100) NOT NULL,
-    Program NVARCHAR(100) NOT NULL
-);
-```
-
-#### Teachers lentelė
-```sql
-CREATE TABLE Teachers (
-    Id INT PRIMARY KEY IDENTITY(1,1),
-    UserId INT FOREIGN KEY REFERENCES Users(Id) ON DELETE CASCADE,
-    FirstName NVARCHAR(50) NOT NULL,
-    LastName NVARCHAR(50) NOT NULL,
-    Department NVARCHAR(100) NOT NULL,
-    Position NVARCHAR(100) NOT NULL
+    UserId INT NOT NULL,
+    FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE
+    -- Navigation property: List<Grade> Grades (one-to-many relationship)
 );
 ```
 
@@ -59,14 +42,15 @@ CREATE TABLE Teachers (
 ```sql
 CREATE TABLE Grades (
     Id INT PRIMARY KEY IDENTITY(1,1),
-    StudentId INT FOREIGN KEY REFERENCES Students(Id) ON DELETE CASCADE,
+    StudentId INT NOT NULL,
     Subject NVARCHAR(100) NOT NULL,
-    Score DECIMAL(5,2) NOT NULL,
-    MaxScore DECIMAL(5,2) NOT NULL,
-    GradeType NVARCHAR(50) NOT NULL,
-    Semester NVARCHAR(20) NOT NULL,
+    Score FLOAT NOT NULL,
+    MaxScore FLOAT NOT NULL,
     Date DATETIME NOT NULL,
-    Comments NVARCHAR(500) NULL
+    GradeType INT NOT NULL, -- Enum: Homework, Quiz, Exam, Project, Participation, FinalExam
+    Semester NVARCHAR(20) NOT NULL,
+    Comments NVARCHAR(500) NOT NULL,
+    FOREIGN KEY (StudentId) REFERENCES Students(Id) ON DELETE CASCADE
 );
 ```
 
@@ -74,35 +58,96 @@ CREATE TABLE Grades (
 ```sql
 CREATE TABLE Schedules (
     Id INT PRIMARY KEY IDENTITY(1,1),
-    StudentId INT FOREIGN KEY REFERENCES Students(Id) ON DELETE CASCADE,
+    StudentId INT NOT NULL,
     Subject NVARCHAR(100) NOT NULL,
     StartTime TIME NOT NULL,
     EndTime TIME NOT NULL,
     DayOfWeek INT NOT NULL,
     Room NVARCHAR(50) NOT NULL,
     Semester NVARCHAR(20) NOT NULL,
-    IsActive BIT NOT NULL DEFAULT 1
+    IsActive BIT NOT NULL DEFAULT 1,
+    FOREIGN KEY (StudentId) REFERENCES Students(Id) ON DELETE CASCADE
 );
 ```
 
 ### Duomenų bazės ryšių diagrama
 
 ```
-Users 1───┐
-          │
-          │
-          ▼
-Students 1────────┐
-          │       │
-          │       │
-          ▼       ▼
-       Grades   Schedules
+            ┌──────────────────────────────────┐
+            │             Users                │
+            │ - Id                             │
+            │ - Name                           │
+            │ - Email                          │
+            │ - PasswordHash                   │
+            │ - Role (Student, Teacher, Admin) │
+            └──────────────┬───────────────────┘
+                           │
+                           │ 1:1 (only for Student role)
+                           │
+            ┌──────────────▼───────────────────┐
+            │           Students               │
+            │ - Id                             │
+            │ - UserId                         │
+            └──────────────┬───────────────────┘
+                           │
+                 ┌─────────┴─────────┐
+                 │                   │
+                 │ 1:N               │ 1:N
+          ┌──────▼──────┐    ┌──────▼──────┐
+          │             │    │             │
+          │   Grades    │    │  Schedules  │
+          │             │    │             │
+          └─────────────┘    └─────────────┘
+```
 
-Users 1───┐
-          │
-          │
-          ▼
-Teachers 1
+Šis duomenų modelis atspindi faktinę sistemos struktūrą, kur:
+1. `Users` lentelėje saugomi visi sistemos vartotojai, o jų tipas nurodomas `Role` lauke (Student, Teacher, Admin)
+2. Tik Student tipo vartotojai turi susietą įrašą `Students` lentelėje (one-to-one ryšys)
+3. Teacher ir Admin tipų vartotojams nėra sukuriamos atskiros lentelės, jie egzistuoja tik `Users` lentelėje
+4. Kiekvienas studentas (`Student`) gali turėti daug pažymių (`Grade`) (one-to-many ryšys)
+5. Kiekvienas studentas (`Student`) gali turėti daug tvarkaraščio įrašų (`Schedule`) (one-to-many ryšys)
+
+### Duomenų bazės kontekstas
+
+```csharp
+// AppDbContext.cs
+using Microsoft.EntityFrameworkCore;
+using StudentPortal.API.Models;
+
+namespace StudentPortal.API.Data
+{
+    public class AppDbContext : DbContext
+    {
+        //DbSet represents a table in the DB
+        public DbSet<Student> Students { get; set; }
+        public DbSet<Grade> Grades { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Define one-to-one relationship between Student and User
+            modelBuilder.Entity<Student>()
+                .HasOne(s => s.User)
+                .WithOne(u => u.Student)
+                .HasForeignKey<Student>(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // Delete student if user is deleted
+
+            // Configure Grade-Student relationship
+            modelBuilder.Entity<Grade>()
+                .HasOne(g => g.Student)
+                .WithMany(s => s.Grades)
+                .HasForeignKey(g => g.StudentId)
+                .IsRequired();
+                
+            // Schedule-Student relationship uses convention-based configuration
+            // where EF Core automatically sets up the relationship based on navigation properties
+            // and foreign key naming conventions in the Schedule class
+
+            base.OnModelCreating(modelBuilder);
+        }
+    }
+}
 ```
 
 ## API dokumentacija
@@ -148,14 +193,11 @@ Teachers 1
 ```json
 {
   "email": "newstudent@example.com",
+  "name": "vardas",
   "password": "slaptazodis123",
   "role": "Student",
-  "firstName": "Vardas",
-  "lastName": "Pavardė",
   "additionalData": {
     "studentNumber": "ST12345",
-    "faculty": "Informatikos fakultetas",
-    "program": "Programų sistemos"
   }
 }
 ```
@@ -175,7 +217,7 @@ Teachers 1
 
 **Aprašymas**: Gauti visų vartotojų sąrašą (tik administratoriams)
 
-**Reikalingi antraštės**:
+**Reikalingos antraštės**:
 - Authorization: Bearer {token}
 
 **Sėkmingo atsako duomenys (200 OK)**:
@@ -185,15 +227,11 @@ Teachers 1
     "id": 1,
     "email": "admin@example.com",
     "role": "Admin",
-    "createdAt": "2023-01-01T00:00:00Z",
-    "lastLogin": "2023-05-15T14:30:45Z"
   },
   {
     "id": 2,
     "email": "student@example.com",
     "role": "Student",
-    "createdAt": "2023-01-02T00:00:00Z",
-    "lastLogin": "2023-05-16T09:15:30Z"
   }
 ]
 ```
@@ -204,7 +242,7 @@ Teachers 1
 
 **Aprašymas**: Gauti visų studentų sąrašą
 
-**Reikalingi antraštės**:
+**Reikalingos antraštės**:
 - Authorization: Bearer {token}
 
 **Sėkmingo atsako duomenys (200 OK)**:
@@ -213,12 +251,8 @@ Teachers 1
   {
     "id": 1,
     "userId": 2,
-    "firstName": "Vardas",
-    "lastName": "Pavardė",
+    "Name": "Vardas",
     "studentNumber": "ST12345",
-    "enrollmentDate": "2023-09-01T00:00:00Z",
-    "faculty": "Informatikos fakultetas",
-    "program": "Programų sistemos"
   }
 ]
 ```
@@ -229,7 +263,7 @@ Teachers 1
 
 **Aprašymas**: Gauti konkretaus studento pažymius
 
-**Reikalingi antraštės**:
+**Reikalingos antraštės**:
 - Authorization: Bearer {token}
 
 **Sėkmingo atsako duomenys (200 OK)**:
@@ -294,8 +328,7 @@ App
 
 #### StudentPage
 - Rodo studento pažymius ir tvarkaraštį
-- Atvaizdavimas pagal semestrus
-- Duomenų filtravimas ir rūšiavimas
+- Studento informacija, vidurkis
 
 #### GradeList/GradeEditor
 - Pažymių rodymas lentelės formatu
@@ -964,4 +997,4 @@ function GradeList() {
 export default GradeList;
 ```
 
-Šis dokumentas apžvelgia pagrindinius techninius aspektus, kurie yra svarbūs projekto supratimui ir pristatymui. Pateikti kodo pavyzdžiai iliustruoja, kaip realizuoti pagrindiniai sistemos komponentai ir funkcionalumas. 
+Šis dokumentas apžvelgia pagrindinius techninius aspektus, kurie yra svarbūs projekto supratimui. Pateikti kodo pavyzdžiai iliustruoja, kaip realizuoti pagrindiniai sistemos komponentai ir funkcionalumas.
