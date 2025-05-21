@@ -48,7 +48,7 @@ Prisijungus studentui, rodomas pagrindinis valdymo skydelis, kuriame matysite:
 - Svarbių datų (atsiskaitymų, egzaminų) priminimus
 - Bendrą informaciją apie jūsų studijas
 
-![Studento valdymo skydelis](..\pictures\student-dashboard.png)
+![Studento valdymo skydelis](../pictures/student-dashboard.png)
 
 ### Pažymių peržiūra
 
@@ -60,7 +60,7 @@ Studentai gali peržiūrėti savo pažymius:
 
 Pažymiai grupuojami pagal dalyką, o kiekvienam dalykui skaičiuojamas bendras vidurkis.
 
-![Pažymių puslapis](..\pictures\grades.png)
+![Pažymių puslapis](../pictures/grades.png)
 
 ### Tvarkaraščio peržiūra
 
@@ -70,7 +70,7 @@ Studentai gali peržiūrėti savo paskaitų tvarkaraštį:
 2. Matomas jūsų savaitinis tvarkaraštis
 4. Galite matyti dalykos detales (auditorija, dėstytojas, trukmė)
 
-![Tvarkaraščio puslapis](..\pictures\schedule.png)
+![Tvarkaraščio puslapis](../pictures/schedule.png)
 
 ### Profilio valdymas
 
@@ -81,7 +81,7 @@ Norint atnaujinti asmeninę informaciją:
 3. Atnaujinkite savo kontaktinę informaciją "Asmeninė informacija" skiltyje
 4. Pakeiskite slaptažodį "Saugumas" skiltyje
 
-![Informacijos atnaujinimas](..\pictures\profile.png)
+![Informacijos atnaujinimas](../pictures/profile.png)
 
 ## Dėstytojų funkcionalumas
 
@@ -103,7 +103,7 @@ Prisijungus dėstytojui, rodomas pagrindinis valdymo skydelis, kuriame matysite:
 
 Pažymiai nedelsiant matomi studentams jų aplinkoje.
 
-![Pažymių įvedimo forma](..\pictures\grade-entry.png)
+![Pažymių įvedimo forma](../pictures/grade-entry.png)
 
 ## Administratoriaus funkcionalumas
 
@@ -118,7 +118,7 @@ Administratoriai gali valdyti visus sistemos vartotojus:
    - Aktyvuoti/deaktyvuoti paskyrą
    - Atstatyti slaptažodį
 
-![Vartotojų valdymo puslapis](..\pictures\user-management.png)
+![Vartotojų valdymo puslapis](../pictures/user-management.png)
 
 ### Naujų vartotojų kūrimas
 
