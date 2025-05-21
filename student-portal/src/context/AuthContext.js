@@ -9,29 +9,18 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const token = getToken();
         if (token) {
-            setUser( getUserRole() );
+            setUser(getUserRole());
         }
     }, []);
 
-    // const signIn = async (email, password) => {
-    //     try {
-    //         const data = await login(email, password);
-    //         if (data.token) {
-    //             setUser({ role: getUserRole() }); // Update user role
-    //         }
-    //     } catch (error) {
-    //         alert("Invalid credentials");
-    //     }
-    // };
-
     const signIn = async (email, password) => {
-        console.log("🟢 signIn function called!"); // Log when the function runs
+        console.log("🟢 signIn function called!");
     
         try {
             console.log("📡 Sending login request..."); 
             const data = await login(email, password);
     
-            console.log("🔹 Login response:", data); // Check full response
+            console.log("🔹 Login response:", data);
     
             if (data.token) {
                 console.log("🔹 Token received:", data.token);
@@ -46,7 +35,6 @@ export const AuthProvider = ({ children }) => {
             alert("Invalid credentials");
         }
     };
-    
 
     const signOut = () => {
         logout();
