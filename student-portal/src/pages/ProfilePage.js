@@ -43,7 +43,7 @@ const ProfilePage = () => {
                     return;
                 }
 
-                const response = await axios.get(`http://localhost:5267/api/users/${userInfo.id}`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/users/${userInfo.id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -140,7 +140,7 @@ const ProfilePage = () => {
                 return;
             }
 
-            await axios.put(`http://localhost:5267/api/users/${userInfo.id}`, updateData, {
+            await axios.put(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/users/${userInfo.id}`, updateData, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

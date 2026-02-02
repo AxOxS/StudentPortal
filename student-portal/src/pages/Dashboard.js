@@ -24,7 +24,7 @@ const Dashboard = () => {
                 const token = getToken();
                 
                 // Fetch students count
-                const studentsResponse = await axios.get("http://localhost:5267/api/students", {
+                const studentsResponse = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/students`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -60,7 +60,7 @@ const Dashboard = () => {
                 if (user.role === "Student") {
                     try {
                         // Get the student's ID first (assuming there's an endpoint)
-                        const studentData = await axios.get(`http://localhost:5267/api/students/user/${user.id}`, {
+                        const studentData = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/students/user/${user.id}`, {
                             headers: {
                                 Authorization: `Bearer ${token}`
                             }
@@ -68,7 +68,7 @@ const Dashboard = () => {
                         
                         if (studentData?.data?.id) {
                             // Now fetch grades with that student ID
-                            const gradesResponse = await axios.get(`http://localhost:5267/api/grades/${studentData.data.id}`, {
+                            const gradesResponse = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/grades/${studentData.data.id}`, {
                                 headers: {
                                     Authorization: `Bearer ${token}`
                                 }

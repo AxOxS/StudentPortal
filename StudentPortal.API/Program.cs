@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StudentPortal.API.Data;
+using StudentPortal.API.Services;
 using System.Text; //For encodingg JWT
 using Microsoft.AspNetCore.Authentication.JwtBearer; //Supports JWT auth
 using Microsoft.IdentityModel.Tokens; //Token validation for JWT
@@ -59,7 +60,26 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Register DatabaseSeeder
+builder.Services.AddScoped<DatabaseSeeder>();
+
 var app = builder.Build();
+
+// Seed the database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var seeder = services.GetRequiredService<DatabaseSeeder>();
+        await seeder.SeedAsync();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database");
+    }
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();

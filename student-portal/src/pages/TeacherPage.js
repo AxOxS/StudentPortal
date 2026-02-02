@@ -8,28 +8,42 @@ const TeacherPage = () => {
     const [grades, setGrades] = useState([]);
     const [editingGrade, setEditingGrade] = useState(null);
     const [studentId, setStudentId] = useState("");
+    const [students, setStudents] = useState([]);
     const [subject, setSubject] = useState("");
     const [score, setScore] = useState("");
     const [maxScore, setMaxScore] = useState("100");
     const [gradeType, setGradeType] = useState("0");
-    const [semester, setSemester] = useState("2024-1");
+    const [semester, setSemester] = useState("2026-1");
     const [comments, setComments] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // If there's a specific studentId entered, fetch grades for that student
-        if (studentId) {
-            fetchGradesForStudent(studentId);
-        }
+        // Fetch all students on component mount
+        fetchAllStudents();
     }, []);
+
+    const fetchAllStudents = async () => {
+        try {
+            const token = getToken();
+            const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/students`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setStudents(response.data);
+        } catch (err) {
+            console.error("Error fetching students:", err);
+            setError("Failed to load students");
+        }
+    };
 
     const fetchGradesForStudent = async (id) => {
         try {
             setLoading(true);
             setError(null);
             const token = getToken();
-            const response = await axios.get(`http://localhost:5267/api/grades/${id}`, {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/grades/${id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -44,11 +58,13 @@ const TeacherPage = () => {
         }
     };
 
-    const handleSearch = () => {
-        if (studentId) {
-            fetchGradesForStudent(studentId);
+    const handleStudentChange = (e) => {
+        const selectedId = e.target.value;
+        setStudentId(selectedId);
+        if (selectedId) {
+            fetchGradesForStudent(selectedId);
         } else {
-            setError("Please enter a student ID");
+            setGrades([]);
         }
     };
 
@@ -69,7 +85,7 @@ const TeacherPage = () => {
             try {
                 // Get all students and find the one we want
                 const token = getToken();
-                const studentsResponse = await axios.get(`http://localhost:5267/api/students`, {
+                const studentsResponse = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/students`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -162,7 +178,7 @@ const TeacherPage = () => {
                 console.log("Sending grade data:", gradeData);
 
                 const response = await axios.post(
-                    `http://localhost:5267/api/grades`,
+                    `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/grades`,
                     gradeData,
                     {
                         headers: {
@@ -222,7 +238,7 @@ const TeacherPage = () => {
         setScore("");
         setMaxScore("100");
         setGradeType("0");
-        setSemester("2024-1");
+        setSemester("2026-1");
         setComments("");
     };
 
@@ -238,18 +254,25 @@ const TeacherPage = () => {
                 <h2>Teacher Dashboard</h2>
             </div>
 
-            {/* Search Student Grades */}
+            {/* Select Student */}
             <div className="teacher-section">
-                <h3>Find Student Grades</h3>
+                <h3>Select Student</h3>
                 <div className="search-container">
-                    <input 
-                        className="search-input"
-                        type="text" 
-                        placeholder="Enter Student ID" 
-                        value={studentId} 
-                        onChange={(e) => setStudentId(e.target.value)} 
-                    />
-                    <button className="search-button" onClick={handleSearch}>Search</button>
+                    <select 
+                        className="search-input student-select"
+                        value={studentId}
+                        onChange={handleStudentChange}
+                    >
+                        <option value="">-- Select a Student --</option>
+                        {students.map(student => {
+                            const userName = student.user?.name || student.user?.email || `User ${student.userId}`;
+                            return (
+                                <option key={student.id} value={student.id}>
+                                    ID: {student.id} - {userName}
+                                </option>
+                            );
+                        })}
+                    </select>
                 </div>
 
                 {loading && <p className="loading-message">Loading...</p>}

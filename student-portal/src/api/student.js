@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getToken } from "./auth";
 
-const API_URL = "http://localhost:5267/api";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 // Get student info by user ID
 export const getStudentByUserId = async (userId) => {

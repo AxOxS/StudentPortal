@@ -37,7 +37,7 @@ const StudentPage = () => {
                 const userInfo = getUserRole();
 
                 // First get the user information
-                const userResponse = await axios.get(`http://localhost:5267/api/users/${userInfo.id}`, {
+                const userResponse = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/users/${userInfo.id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
