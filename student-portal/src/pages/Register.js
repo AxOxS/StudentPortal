@@ -28,7 +28,7 @@ const Register = () => {
         setError("");
 
         try {
-            const response = await axios.post("http://localhost:5267/api/auth/register", formData, {
+            const response = await axios.post(`${process.env.REACT_APP_AUTH_URL || 'http://localhost:5000/api/auth'}/register`, formData, {
                 headers: { "Content-Type": "application/json" }
             });
 

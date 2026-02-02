@@ -27,8 +27,11 @@ namespace StudentPortal.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetStudents()
         {
-            var students = await _context.Students.Include(s => s.Grades).ToListAsync(); //Fetches all the students from the DB and use include to load related grades.
-            return Ok(students); //returns 200ok with the data
+            var students = await _context.Students
+                .Include(s => s.User)
+                .Include(s => s.Grades)
+                .ToListAsync();
+            return Ok(students);
         }
 
         //Add new students Post /api/students

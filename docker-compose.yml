@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # SQL Server Database
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: studentportal-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_PASSWORD:-YourStrong@Passw0rd}
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - studentportal-network
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${DB_PASSWORD:-YourStrong@Passw0rd} -Q "SELECT 1" -C || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # .NET API
+  api:
+    build:
+      context: ./StudentPortal.API
+      dockerfile: Dockerfile
+    container_name: studentportal-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Server=db;Database=StudentPortal;User Id=sa;Password=${DB_PASSWORD:-YourStrong@Passw0rd};MultipleActiveResultSets=true;TrustServerCertificate=True
+      - Jwt__Key=${JWT_SECRET:-N7vQ!pL3@Xk9#2ZrF6sH%T4WmA8B^eC0YJdK5U1&}
+      - Jwt__Issuer=${JWT_ISSUER:-StudentPortal}
+      - Jwt__Audience=${JWT_AUDIENCE:-StudentPortalClient}
+      - SeedData__Enabled=${SEED_DATA:-true}
+      - SeedData__StudentEmail=${SEED_STUDENT_EMAIL:-student@test.com}
+      - SeedData__StudentPassword=${SEED_STUDENT_PASSWORD:-Student123!}
+      - SeedData__TeacherEmail=${SEED_TEACHER_EMAIL:-teacher@test.com}
+      - SeedData__TeacherPassword=${SEED_TEACHER_PASSWORD:-Teacher123!}
+      - SeedData__AdminEmail=${SEED_ADMIN_EMAIL:-admin@test.com}
+      - SeedData__AdminPassword=${SEED_ADMIN_PASSWORD:-Admin123!}
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - studentportal-network
+    restart: on-failure
+
+  # React Frontend
+  web:
+    build:
+      context: ./student-portal
+      dockerfile: Dockerfile
+    container_name: studentportal-web
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - studentportal-network
+    restart: on-failure
+
+volumes:
+  sqlserver-data:
+    driver: local
+
+networks:
+  studentportal-network:
+    driver: bridge
