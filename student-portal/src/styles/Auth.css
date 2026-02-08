@@ -115,6 +115,15 @@
     font-size: 14px;
 }
 
+.success-message {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
     .auth-card {

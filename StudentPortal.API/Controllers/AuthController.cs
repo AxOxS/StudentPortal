@@ -32,6 +32,12 @@ namespace StudentPortal.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(User user)
         {
+            // Validate password is provided
+            if (string.IsNullOrWhiteSpace(user.PasswordHash))
+            {
+                return BadRequest("Password is required.");
+            }
+
             if (_context.Users.Any(u => u.Email == user.Email))
             {
                 return BadRequest("Email already exists.");

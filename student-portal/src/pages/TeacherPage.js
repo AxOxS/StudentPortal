@@ -201,11 +201,6 @@ const TeacherPage = () => {
                 setComments("");
                 setError(null);
             } catch (err) {
-                const errorResponse = err.response?.data;
-                const errorMessage = typeof errorResponse === 'object' ? 
-                    errorResponse.message || JSON.stringify(errorResponse) : 
-                    err.message;
-                
                 console.error("Error adding grade:", {
                     status: err.response?.status,
                     statusText: err.response?.statusText,
@@ -213,8 +208,24 @@ const TeacherPage = () => {
                     error: err
                 });
                 
+                // Parse error message from validation errors
+                let errorMessage = "Failed to add grade";
+                const errorData = err.response?.data;
+                
+                if (errorData?.errors) {
+                    // Extract validation errors (e.g., {"Score": ["The field Score must be between 0 and 100."]})
+                    const validationErrors = Object.values(errorData.errors).flat();
+                    errorMessage = validationErrors.join(', ');
+                } else if (typeof errorData === 'string') {
+                    errorMessage = errorData;
+                } else if (errorData?.message) {
+                    errorMessage = errorData.message;
+                } else if (errorData?.title) {
+                    errorMessage = errorData.title;
+                }
+                
                 setError(errorMessage);
-                alert(`Failed to add grade: ${errorMessage}`);
+                alert(errorMessage);
             }
         }
     };
