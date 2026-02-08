@@ -12,6 +12,7 @@ const Register = () => {
     });
 
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     const navigate = useNavigate();
 
     // Handle input change
@@ -26,6 +27,7 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        setSuccess("");
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_AUTH_URL || 'http://localhost:5000/api/auth'}/register`, formData, {
@@ -33,11 +35,15 @@ const Register = () => {
             });
 
             if (response.status === 200 || response.status === 201) {
-                alert("User registered successfully!");
-                navigate("/login"); // Redirect to login page
+                setSuccess("User registered successfully! Redirecting to login...");
+                setTimeout(() => navigate("/login"), 2000); // Redirect after 2 seconds
             }
         } catch (err) {
-            setError(err.response?.data?.message || "Registration failed.");
+            // Handle error - check if it's a string or object
+            const errorMsg = typeof err.response?.data === 'string' 
+                ? err.response.data 
+                : err.response?.data?.message || err.response?.data || "Registration failed.";
+            setError(errorMsg);
         }
     };
 
@@ -50,6 +56,7 @@ const Register = () => {
                 </div>
                 
                 {error && <div className="error-message">{error}</div>}
+                {success && <div className="success-message">{success}</div>}
                 
                 <form className="auth-form" onSubmit={handleSubmit}>
                     <div className="form-group">

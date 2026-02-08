@@ -26,33 +26,32 @@ const AdminPage = () => {
             setLoading(true);
             setError(null);
 
-            // Fetch users and stats in parallel
-            const [usersData, statsData] = await Promise.all([
-                getAllUsers(),
-                getSystemStats()
-            ]);
-
+            // Fetch users
+            const usersData = await getAllUsers();
             setUsers(usersData);
-            setStats(statsData);
+            
+            // Calculate stats from users data
+            const totalUsers = usersData.length;
+            const totalStudents = usersData.filter(u => u.role === 'Student').length;
+            const totalTeachers = usersData.filter(u => u.role === 'Teacher').length;
+            
+            setStats({
+                totalUsers,
+                totalStudents,
+                totalTeachers,
+                activeUsers: totalUsers, // All users are considered active for now
+                recentRegistrations: 0 // Not tracked yet
+            });
         } catch (err) {
             console.error("Error fetching admin data:", err);
             setError("Failed to load admin data. Please try again later.");
-            
-            // For demo purposes, set some mock data
-            setUsers([
-                { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Student' },
-                { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Teacher' },
-                { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'Student' },
-                { id: 4, name: 'Alice Williams', email: 'alice@example.com', role: 'Student' },
-                { id: 5, name: 'Michael Brown', email: 'michael@example.com', role: 'Teacher' },
-            ]);
-            
+            setUsers([]);
             setStats({
-                totalUsers: 42,
-                totalStudents: 35,
-                totalTeachers: 7,
-                activeUsers: 38,
-                recentRegistrations: 5
+                totalUsers: 0,
+                totalStudents: 0,
+                totalTeachers: 0,
+                activeUsers: 0,
+                recentRegistrations: 0
             });
         } finally {
             setLoading(false);

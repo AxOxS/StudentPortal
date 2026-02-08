@@ -106,15 +106,10 @@ const ProfilePage = () => {
                 updateData.email = formData.email;
             }
 
-            // Validate password fields if any password field is filled
-            if (formData.newPassword || formData.currentPassword || formData.confirmPassword) {
+            // Validate password fields ONLY if user wants to change password (new password is provided)
+            if (formData.newPassword) {
                 if (!formData.currentPassword) {
                     setError('Current password is required to change password');
-                    setLoading(false);
-                    return;
-                }
-                if (!formData.newPassword) {
-                    setError('New password is required');
                     setLoading(false);
                     return;
                 }

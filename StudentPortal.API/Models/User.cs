@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations; //Allows to set data annotations, to set validation rules for the db model
+using System.Text.Json.Serialization; //Enables JsonIgnore attribute to hide sensitive fields from API responses
 
 namespace StudentPortal.API.Models
 {
@@ -16,6 +17,8 @@ namespace StudentPortal.API.Models
         [StringLength(255)]
         public string Email { get; set; }
 
+        // Note: PasswordHash should never be sent to clients
+        // Controllers must explicitly exclude it from responses using Select() or anonymous objects
         [Required]
         public string PasswordHash { get; set; }
 

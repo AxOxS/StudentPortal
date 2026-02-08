@@ -30,6 +30,20 @@ namespace StudentPortal.API.Controllers
             var students = await _context.Students
                 .Include(s => s.User)
                 .Include(s => s.Grades)
+                .Select(s => new
+                {
+                    s.Id,
+                    s.UserId,
+                    Grades = s.Grades,
+                    User = new
+                    {
+                        s.User.Id,
+                        s.User.Name,
+                        s.User.Email,
+                        s.User.Role
+                        // PasswordHash is intentionally excluded
+                    }
+                })
                 .ToListAsync();
             return Ok(students);
         }

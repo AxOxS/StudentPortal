@@ -19,6 +19,24 @@ namespace StudentPortal.API.Controllers
             _context = context;
         }
 
+        // GET: api/users - Get all users (Admin only)
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<object>>> GetAllUsers()
+        {
+            var users = await _context.Users
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Name,
+                    u.Email,
+                    u.Role
+                })
+                .ToListAsync();
+
+            return Ok(users);
+        }
+
         // GET: api/users/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<object>> GetUser(int id)
@@ -51,6 +69,12 @@ namespace StudentPortal.API.Controllers
                 return NotFound();
             }
 
+            // Update name if provided
+            if (!string.IsNullOrEmpty(request.Name))
+            {
+                user.Name = request.Name;
+            }
+
             // Update email if provided
             if (!string.IsNullOrEmpty(request.Email))
             {
@@ -62,6 +86,12 @@ namespace StudentPortal.API.Controllers
                     return BadRequest("Email is already in use");
                 }
                 user.Email = request.Email;
+            }
+
+            // Update role if provided (Admin only)
+            if (!string.IsNullOrEmpty(request.Role))
+            {
+                user.Role = request.Role;
             }
 
             // Update password if provided
@@ -101,6 +131,33 @@ namespace StudentPortal.API.Controllers
             return NoContent();
         }
 
+        // DELETE: api/users/{id} - Delete a user (Admin only)
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Optional: Prevent deleting the last admin
+            if (user.Role == "Admin")
+            {
+                var adminCount = await _context.Users.CountAsync(u => u.Role == "Admin");
+                if (adminCount <= 1)
+                {
+                    return BadRequest("Cannot delete the last admin user");
+                }
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         private async Task<bool> UserExists(int id)
         {
             return await _context.Users.AnyAsync(e => e.Id == id);
@@ -109,7 +166,9 @@ namespace StudentPortal.API.Controllers
 
     public class UpdateUserRequest
     {
+        public string? Name { get; set; }
         public string? Email { get; set; }
+        public string? Role { get; set; }
         public string? CurrentPassword { get; set; }
         public string? NewPassword { get; set; }
     }
