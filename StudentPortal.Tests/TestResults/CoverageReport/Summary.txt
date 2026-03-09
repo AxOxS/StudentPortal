@@ -1,0 +1,51 @@
+Summary
+  Generated on: 3/9/2026 - 10:33:52 AM
+  Coverage date: 3/8/2026 - 12:46:15 PM
+  Parser: Cobertura
+  Assemblies: 1
+  Classes: 29
+  Files: 37
+  Line coverage: 10.3%
+  Covered lines: 276
+  Uncovered lines: 2382
+  Coverable lines: 2658
+  Total lines: 3810
+  Branch coverage: 45.9% (45 of 98)
+  Covered branches: 45
+  Total branches: 98
+  Method coverage: 44.5% (49 of 110)
+  Full method coverage: 40% (44 of 110)
+  Covered methods: 49
+  Fully covered methods: 44
+  Total methods: 110
+
+StudentPortal.API                                                     10.3%
+  Program                                                                0%
+  StudentPortal.API.Controllers.AuthController                         100%
+  StudentPortal.API.Controllers.GradesController                      75.7%
+  StudentPortal.API.Controllers.ScheduleController                    91.1%
+  StudentPortal.API.Controllers.StudentController                        0%
+  StudentPortal.API.Controllers.UpdateUserRequest                        0%
+  StudentPortal.API.Controllers.UserController                           0%
+  StudentPortal.API.Controllers.WeatherForecastController                0%
+  StudentPortal.API.Data.AppDbContext                                  100%
+  StudentPortal.API.Data.Migrations.AddGradeAndScheduleEnhancements      0%
+  StudentPortal.API.Data.Migrations.CleanupOrphanedRecords               0%
+  StudentPortal.API.Migrations.AddScheduleModel                          0%
+  StudentPortal.API.Migrations.AddStudentUserRelation                    0%
+  StudentPortal.API.Migrations.AddUsersTable                             0%
+  StudentPortal.API.Migrations.AppDbContextModelSnapshot                 0%
+  StudentPortal.API.Migrations.CleanupExistingData                       0%
+  StudentPortal.API.Migrations.CreateDatabase                            0%
+  StudentPortal.API.Migrations.FixStudentId                              0%
+  StudentPortal.API.Migrations.InitialCreate                             0%
+  StudentPortal.API.Migrations.MakeCommentsOptional                      0%
+  StudentPortal.API.Migrations.MakeStudentNullableInSchedule             0%
+  StudentPortal.API.Migrations.RemoveRedundantStudentFields              0%
+  StudentPortal.API.Models.AuthRequest                                 100%
+  StudentPortal.API.Models.Grade                                       100%
+  StudentPortal.API.Models.Schedule                                     90%
+  StudentPortal.API.Models.Student                                      75%
+  StudentPortal.API.Models.User                                       83.3%
+  StudentPortal.API.Services.DatabaseSeeder                              0%
+  StudentPortal.API.WeatherForecast                                      0%
