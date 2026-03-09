@@ -102,7 +102,7 @@ StudentPortal yra švietimo valdymo sistema, skirta studentų, dėstytojų ir ad
 | **Prioritetas** | Aukštas |
 | **Scenarijaus aprašymas** | Vartotojas prisijungia su galiojančiais el. paštu ir slaptažodžiu |
 | **Prieš-sąlygos** | Vartotojas jau registruotas sistemoje |
-| **Testavimo žingsniai** | 1. Atidaryti prisijungimo puslapį<br>2. Įvesti galiojantį el. paštą (pvz., student@test.com)<br>3. Įvesti teisingą slaptažodį<br>4. Paspausti "Login" mygtuką |
+| **Testavimo žingsniai** | 1. Atidaryti prisijungimo puslapį<br>2. Įvesti galiojantį el. paštą (student@test.com)<br>3. Įvesti teisingą slaptažodį (Student123!)<br>4. Paspausti "Login" mygtuką |
 | **Laukiamas rezultatas** | - Sistema autentifikuoja vartotoją<br>- Grąžinamas JWT tokenas<br>- Vartotojas nukreipiamas į pagrindinį puslapį pagal rolę<br>- Vartotojo vardas matomas nustatymuose |
 | **Testavimo rezultatas** | Pass / Fail |
 | **Pastabos** | Testuoti su visomis trimis rolėmis: Student, Teacher, Admin |
@@ -118,7 +118,7 @@ StudentPortal yra švietimo valdymo sistema, skirta studentų, dėstytojų ir ad
 | **Prioritetas** | Aukštas |
 | **Scenarijaus aprašymas** | Naujas vartotojas registruojasi sistemoje |
 | **Prieš-sąlygos** | El. paštas dar neregistruotas sistemoje |
-| **Testavimo žingsniai** | 1. Atidaryti registracijos puslapį<br>2. Įvesti vardą (pvz., "Jonas Jonaitis")<br>3. Įvesti unikalų el. paštą (pvz., jonas@test.com)<br>4. Įvesti slaptažodį (pvz., "Test123!@#")<br>5. Pasirinkti rolę (pvz., "Student")<br>6. Paspausti "Register" mygtuką |
+| **Testavimo žingsniai** | 1. Atidaryti registracijos puslapį<br>2. Įvesti vardą ("Jonas Jonaitis")<br>3. Įvesti unikalų el. paštą (jonas@test.com)<br>4. Įvesti slaptažodį ("Test123!@#")<br>5. Pasirinkti rolę ("Student")<br>6. Paspausti "Register" mygtuką |
 | **Laukiamas rezultatas** | - Vartotojas sėkmingai sukuriamas duomenų bazėje<br>- Slaptažodis hash'inamas BCrypt algoritmu<br>- Grąžinamas pranešimas "User registered successfully" |
 | **Testavimo rezultatas** | Pass / Fail |
 | **Pastabos** | Patikrinti, kad Student įrašas sukurtas duomenų bazėje |
@@ -136,7 +136,7 @@ StudentPortal yra švietimo valdymo sistema, skirta studentų, dėstytojų ir ad
 | **Prioritetas** | Aukštas |
 | **Scenarijaus aprašymas** | Vartotojas bando prisijungti su neteisingais duomenimis |
 | **Prieš-sąlygos** | Nėra |
-| **Testavimo žingsniai** | 1. Atidaryti prisijungimo puslapį<br>2. Įvesti el. paštą (pvz., user@test.com)<br>3. Įvesti neteisingą slaptažodį (pvz., "wrongpassword")<br>4. Paspausti "Login" mygtuką |
+| **Testavimo žingsniai** | 1. Atidaryti prisijungimo puslapį<br>2. Įvesti el. paštą (student@test.com)<br>3. Įvesti neteisingą slaptažodį ("wrongpassword")<br>4. Paspausti "Login" mygtuką |
 | **Laukiamas rezultatas** | - Sistema grąžina klaidą "Invalid email or password"<br>- HTTP status code: 401 Unauthorized<br>- JWT tokenas nėra generuojamas<br>- Vartotojas lieka prisijungimo puslapyje |
 | **Testavimo rezultatas** | Pass / Fail |
 | **Pastabos** | Svarbu, kad klaidos pranešimas nebūtų per detalus (saugumo sumetimais) |
@@ -202,7 +202,7 @@ StudentPortal yra švietimo valdymo sistema, skirta studentų, dėstytojų ir ad
 | **Prioritetas** | Aukštas |
 | **Scenarijaus aprašymas** | Dėstytojas prideda naują pažymį studentui |
 | **Prieš-sąlygos** | - Vartotojas prisijungęs su Teacher role<br>- Studentas egzistuoja sistemoje |
-| **Testavimo žingsniai** | 1. Prisijungti kaip dėstytojas<br>2. Eiti į pažymių valdymo puslapį<br>3. Pasirinkti studentą<br>4. Įvesti dalyką (pvz., "Matematika")<br>5. Įvesti balą (pvz., 85)<br>6. Įvesti maksimalų balą (pvz., 100)<br>7. Pasirinkti pažymio tipą (pvz., "Exam")<br>8. Įvesti semestrą (pvz., "2024 Ruduo")<br>9. Pridėti komentarą (pvz., "Puikiai išsprendė visas užduotis")<br>10. Paspausti "Add Grade" |
+| **Testavimo žingsniai** | 1. Prisijungti kaip dėstytojas<br>2. Eiti į pažymių valdymo puslapį<br>3. Pasirinkti studentą<br>4. Įvesti dalyką ("Matematika")<br>5. Įvesti balą (85)<br>6. Įvesti maksimalų balą (100)<br>7. Pasirinkti pažymio tipą ("Exam")<br>8. Įvesti semestrą ("2024 Ruduo")<br>9. Pridėti komentarą ("Puikiai išsprendė visas užduotis")<br>10. Paspausti "Add Grade" |
 | **Laukiamas rezultatas** | - Pažymys sėkmingai išsaugomas duomenų bazėje<br>- HTTP status code: 201 Created<br>- Grąžinamas sukurtas pažymio objektas su ID<br>- Pažymys matomas studento pažymių sąraše |
 | **Testavimo rezultatas** | Pass / Fail |
 | **Pastabos** | Patikrinti visus GradeType tipus: Homework, Quiz, Exam, Project, Participation, FinalExam |
@@ -234,7 +234,7 @@ StudentPortal yra švietimo valdymo sistema, skirta studentų, dėstytojų ir ad
 | **Prioritetas** | Vidutinis |
 | **Scenarijaus aprašymas** | Dėstytojas koreguoja jau egzistuojantį pažymį |
 | **Prieš-sąlygos** | - Vartotojas prisijungęs kaip Teacher<br>- Pažymys egzistuoja sistemoje |
-| **Testavimo žingsniai** | 1. Prisijungti kaip dėstytojas<br>2. Eiti į pažymių valdymo puslapį<br>3. Pasirinkti pažymį redagavimui<br>4. Pakeisti balą (pvz., iš 85 į 90)<br>5. Atnaujinti komentarą<br>6. Paspausti "Update Grade" |
+| **Testavimo žingsniai** | 1. Prisijungti kaip dėstytojas<br>2. Eiti į pažymių valdymo puslapį<br>3. Pasirinkti pažymį redagavimui<br>4. Pakeisti balą (iš 85 į 90)<br>5. Atnaujinti komentarą<br>6. Paspausti "Update Grade" |
 | **Laukiamas rezultatas** | - Pažymys sėkmingai atnaujinamas duomenų bazėje<br>- HTTP status code: 200 OK<br>- Grąžinamas atnaujintas pažymio objektas<br>- Pakeitimai matomi iš karto |
 | **Testavimo rezultatas** | Pass / Fail |
 | **Pastabos** | Patikrinti, kad visi laukai gali būti redaguojami |
@@ -318,7 +318,7 @@ StudentPortal yra švietimo valdymo sistema, skirta studentų, dėstytojų ir ad
 | **Prioritetas** | Aukštas |
 | **Scenarijaus aprašymas** | Studentas prideda naują tvarkaraščio įrašą |
 | **Prieš-sąlygos** | - Vartotojas prisijungęs kaip studentas |
-| **Testavimo žingsniai** | 1. Prisijungti kaip Student<br>2. Eiti į tvarkaraščio valdymo puslapį<br>3. Įvesti dalyką (pvz., "Programavimas")<br>4. Įvesti pradžios laiką (pvz., 10:00)<br>5. Įvesti pabaigos laiką (pvz., 11:30)<br>6. Pasirinkti savaitės dieną (pvz., "Monday")<br>7. Įvesti kabinetą (pvz., "A-205")<br>8. Įvesti semestrą (pvz., "2024 Pavasaris")<br>9. Paspausti "Add Schedule" |
+| **Testavimo žingsniai** | 1. Prisijungti kaip Student<br>2. Eiti į tvarkaraščio valdymo puslapį<br>3. Įvesti dalyką ("Programavimas")<br>4. Įvesti pradžios laiką (10:00)<br>5. Įvesti pabaigos laiką (11:30)<br>6. Pasirinkti savaitės dieną ("Monday")<br>7. Įvesti kabinetą ("A-205")<br>8. Įvesti semestrą ("2024 Pavasaris")<br>9. Paspausti "Add Schedule" |
 | **Laukiamas rezultatas** | - Tvarkaraščio įrašas sėkmingai išsaugomas<br>- HTTP status code: 201 Created<br>- IsActive nustatyta į true pagal nutylėjimą<br>- Įrašas matomas studento tvarkaraštyje |
 | **Testavimo rezultatas** | Pass / Fail |
 | **Pastabos** | Testuoti visoms savaitės dienoms (Monday-Sunday) |
@@ -350,7 +350,7 @@ StudentPortal yra švietimo valdymo sistema, skirta studentų, dėstytojų ir ad
 | **Prioritetas** | Vidutinis |
 | **Scenarijaus aprašymas** | Student redaguoja egzistuojantį tvarkaraščio įrašą |
 | **Prieš-sąlygos** | - Vartotojas prisijungęs kaip Student<br>- Tvarkaraščio įrašas egzistuoja |
-| **Testavimo žingsniai** | 1. Prisijungti kaip Student<br>2. Eiti į tvarkaraščio valdymo puslapį<br>3. Pasirinkti įrašą redagavimui<br>4. Pakeisti kabinetą (pvz., iš "A-205" į "B-101")<br>5. Pakeisti laiką<br>6. Paspausti "Update Schedule" |
+| **Testavimo žingsniai** | 1. Prisijungti kaip Student<br>2. Eiti į tvarkaraščio valdymo puslapį<br>3. Pasirinkti įrašą redagavimui<br>4. Pakeisti kabinetą (iš "A-205" į "B-101")<br>5. Pakeisti laiką<br>6. Paspausti "Update Schedule" |
 | **Laukiamas rezultatas** | - Tvarkaraščio įrašas sėkmingai atnaujinamas<br>- HTTP status code: 200 OK<br>- Pakeitimai matomi iš karto<br>- Grąžinamas atnaujintas objektas |
 | **Testavimo rezultatas** | Pass / Fail |
 | **Pastabos** | Užtikrinti, kad tik studentas gali redaguoti savo  tvarkaraštį |
@@ -502,7 +502,7 @@ StudentPortal yra švietimo valdymo sistema, skirta studentų, dėstytojų ir ad
 | **Prioritetas** | Kritinis |
 | **Scenarijaus aprašymas** | Bandoma atlikti SQL injection ataką per prisijungimo formą |
 | **Prieš-sąlygos** | Nėra |
-| **Testavimo žingsniai** | 1. Atidaryti prisijungimo puslapį<br>2. Įvesti SQL injection kodą email lauke (pvz., "admin'--", "' OR '1'='1", "admin'; DROP TABLE Users--")<br>3. Įvesti bet kokį slaptažodį<br>4. Paspausti "Login" |
+| **Testavimo žingsniai** | 1. Atidaryti prisijungimo puslapį<br>2. Įvesti SQL injection kodą email lauke ("admin'--", "' OR '1'='1", "admin'; DROP TABLE Users--")<br>3. Įvesti bet kokį slaptažodį<br>4. Paspausti "Login" |
 | **Laukiamas rezultatas** | - SQL injection nepavyksta<br>- Sistema saugiai apdoroja įvestį<br>- HTTP status code: 401 Unauthorized<br>- Duomenų bazė nepaveikta |
 | **Testavimo rezultatas** | Pass / Fail |
 | **Pastabos** | EF Core automatiškai apsaugo nuo SQL injection |
@@ -733,25 +733,7 @@ Testuojami šie moduliai:
 
 ### 4.4. Testavimo Išvados
 
-Po testavimo atlikimo, šioje sekcijoje dokumentuosiu:
-
-1. **Rasti defektai:**
-   - Defekto ID
-   - Aprašymas
-   - Prioritetas
-   - Būsena (Open/Fixed/Closed)
-
-2. **Sistemos stiprybės:**
-   - Kas veikia gerai
-   - Geriausios praktikos, kurios implementuotos
-
-3. **Sistemos silpnybės:**
-   - Kas reikalauja pagerinimo
-   - Trūkstamos validacijos
-
-4. **Rekomendacijos:**
-   - Siūlymai sistemos tobulinimui
-   - Papildomos funkcijos
+Atlikus testus defektų nerasta, sistema puikiai validuoja naudotojo klaidas, aiškiais pranešimais praneša, kur padaryta klaida. Uždari endpointai apsaugoti tinkamai, nepasiekiami vartotojams, kurie neturi prieigos. Apsaugota nuo javascript ir sql injection atakų, slaptažodžiai hashinami ir užkriptuoti, negrąžinama iš backendo į frontendą.
 
 ---
 
