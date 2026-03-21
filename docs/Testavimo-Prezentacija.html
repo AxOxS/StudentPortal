@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudentPortal – Testavimo Strategija</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════════════
+   TOKENS
+════════════════════════════════════════════════ */
+:root {
+  --blue:    #3b82f6;
+  --blue-d:  #1d4ed8;
+  --teal:    #06b6d4;
+  --violet:  #8b5cf6;
+  --green:   #10b981;
+  --amber:   #f59e0b;
+  --red:     #ef4444;
+  --ink:     #0b1120;
+  --surface: #111827;
+  --card:    rgba(255,255,255,0.04);
+  --border:  rgba(255,255,255,0.08);
+  --muted:   #6b7280;
+  --soft:    #9ca3af;
+  --text:    #e5e7eb;
+  --white:   #ffffff;
+}
+
+/* ════════════════════════════════════════════════
+   RESET / BASE
+════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { height: 100%; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--ink);
+  color: var(--text);
+  overflow: hidden;
+  height: 100vh;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.92em;
+  color: #c4b5fd;
+  background: rgba(255,255,255,0.06);
+  padding: 0.12em 0.38em;
+  border-radius: 4px;
+}
+
+/* ════════════════════════════════════════════════
+   SIDEBAR NAV
+════════════════════════════════════════════════ */
+#nav {
+  position: fixed;
+  top: 0; left: 0;
+  width: 200px;
+  height: 100vh;
+  background: rgba(11,17,32,0.98);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  overflow: hidden;
+}
+#nav-header {
+  padding: 20px 18px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+#nav-header .logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+#nav-header .sub {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+#nav-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 18px;
+  cursor: pointer;
+  font-size: 11.5px;
+  color: var(--muted);
+  transition: all 0.18s;
+  border-left: 2px solid transparent;
+  line-height: 1.3;
+  text-decoration: none;
+}
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.nav-item.active {
+  color: var(--white);
+  border-left-color: var(--teal);
+  background: rgba(6,182,212,0.08);
+}
+.nav-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--teal);
+  opacity: 0.6;
+  min-width: 16px;
+  flex-shrink: 0;
+}
+#nav-footer {
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.progress-bar {
+  height: 2px;
+  background: var(--border);
+  border-radius: 99px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--blue));
+  border-radius: 99px;
+  transition: width 0.3s;
+  width: 0%;
+}
+
+/* ════════════════════════════════════════════════
+   SLIDE VIEWPORT
+════════════════════════════════════════════════ */
+#viewport {
+  margin-left: 200px;
+  height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+.slide {
+  height: 100vh;
+  min-height: 580px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: clamp(32px, 4vw, 44px) clamp(32px, 5vw, 60px);
+  position: relative;
+  overflow: hidden;
+}
+
+#s01 {
+  justify-content: center;
+}
+
+/* Slide themes */
+.s-ink     { background: #0b1120; }
+.s-navy    { background: linear-gradient(145deg, #0f172a 0%, #0c1e40 100%); }
+.s-deep    { background: linear-gradient(145deg, #111827 0%, #0a1628 100%); }
+.s-teal    { background: linear-gradient(145deg, #042f2e 0%, #0b1120 100%); }
+.s-violet  { background: linear-gradient(145deg, #1e1245 0%, #0b1120 100%); }
+.s-red     { background: linear-gradient(145deg, #1f0a0a 0%, #0b1120 100%); }
+.s-green   { background: linear-gradient(145deg, #052e16 0%, #0b1120 100%); }
+
+/* Ambient orb */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  opacity: 0.18;
+}
+.orb-tl  { width: 360px; height: 360px; top: -120px; left: -80px; background: var(--teal); }
+.orb-br  { width: 300px; height: 300px; bottom: -100px; right: -60px; background: var(--blue); }
+.orb-v   { width: 280px; height: 280px; top: -80px; right: -60px; background: var(--violet); }
+.orb-r   { width: 260px; height: 260px; bottom: -80px; left: -40px; background: var(--red); }
+
+/* Slide counter */
+.s-counter {
+  position: absolute;
+  top: 22px;
+  right: 36px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 2px;
+}
+
+/* ════════════════════════════════════════════════
+   TYPOGRAPHY
+════════════════════════════════════════════════ */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.ey-teal   { background: rgba(6,182,212,0.15);  color: #67e8f9; border: 1px solid rgba(6,182,212,0.25); }
+.ey-blue   { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.25); }
+.ey-violet { background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.25); }
+.ey-green  { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+.ey-amber  { background: rgba(245,158,11,0.15); color: #fde68a; border: 1px solid rgba(245,158,11,0.25); }
+.ey-red    { background: rgba(239,68,68,0.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+
+h1.hero {
+  font-family: 'Syne', sans-serif;
+  font-size: 68px;
+  font-weight: 800;
+  line-height: 1.0;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+h1.hero span {
+  background: linear-gradient(130deg, #67e8f9 0%, #3b82f6 60%, #8b5cf6 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h2.stitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+  line-height: 1.15;
+}
+.sdesc {
+  font-size: 15px;
+  color: var(--soft);
+  margin-bottom: 28px;
+  line-height: 1.6;
+  max-width: 620px;
+}
+.sdesc-sm {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+/* ════════════════════════════════════════════════
+   LAYOUT GRIDS
+════════════════════════════════════════════════ */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; align-items: start; }
+.g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; align-items: start; }
+.g5 { display: grid; grid-template-columns: repeat(5,1fr); gap: 14px; align-items: start; }
+.g-60-40 { display: grid; grid-template-columns: 60fr 40fr; gap: 28px; align-items: start; }
+.g-55-45 { display: grid; grid-template-columns: 55fr 45fr; gap: 28px; align-items: start; }
+
+/* ════════════════════════════════════════════════
+   CARDS
+════════════════════════════════════════════════ */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  min-width: 0;
+}
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  color: var(--soft);
+}
+.card p, .card li {
+  font-size: 12.5px;
+  color: #9ca3af;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.card ul { padding-left: 14px; }
+.card-teal  { border-color: rgba(6,182,212,0.3);  }
+.card-blue  { border-color: rgba(59,130,246,0.3); }
+.card-red   { border-color: rgba(239,68,68,0.3);  }
+.card-green { border-color: rgba(16,185,129,0.3); }
+.card-amber { border-color: rgba(245,158,11,0.3); }
+.card-violet{ border-color: rgba(139,92,246,0.3); }
+
+/* ════════════════════════════════════════════════
+   STATS
+════════════════════════════════════════════════ */
+.stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 16px;
+  text-align: center;
+}
+.stat-n {
+  font-family: 'Syne', sans-serif;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-n.c-teal   { color: var(--teal); }
+.stat-n.c-blue   { color: var(--blue); }
+.stat-n.c-green  { color: var(--green); }
+.stat-n.c-amber  { color: var(--amber); }
+.stat-n.c-red    { color: var(--red); }
+.stat-n.c-violet { color: var(--violet); }
+.stat-l {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+/* ════════════════════════════════════════════════
+   TABLE
+════════════════════════════════════════════════ */
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; table-layout: fixed; }
+thead th {
+  background: rgba(59,130,246,0.1);
+  color: #93c5fd;
+  padding: 9px 13px;
+  text-align: left;
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+tbody td {
+  padding: 8px 13px;
+  color: var(--soft);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: rgba(255,255,255,0.03); }
+
+/* ════════════════════════════════════════════════
+   BADGES
+════════════════════════════════════════════════ */
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.b-p1 { background: rgba(239,68,68,0.2);   color: #fca5a5; border:1px solid rgba(239,68,68,0.4); }
+.b-p2 { background: rgba(245,158,11,0.2);  color: #fde68a; border:1px solid rgba(245,158,11,0.4); }
+.b-p3 { background: rgba(59,130,246,0.2);  color: #93c5fd; border:1px solid rgba(59,130,246,0.4); }
+.b-ok { background: rgba(16,185,129,0.2);  color: #6ee7b7; border:1px solid rgba(16,185,129,0.4); }
+.b-warn { background: rgba(245,158,11,0.15); color: #fde68a; border:1px solid rgba(245,158,11,0.3); }
+.b-fail { background: rgba(239,68,68,0.15);  color: #fca5a5; border:1px solid rgba(239,68,68,0.3); }
+.b-open { background: rgba(239,68,68,0.12);  color: #fca5a5; border:1px solid rgba(239,68,68,0.25); font-size:10px; }
+
+/* ════════════════════════════════════════════════
+   COVERAGE BARS
+════════════════════════════════════════════════ */
+.cov-row { margin-bottom: 10px; }
+.cov-lbl { font-size: 11.5px; color: var(--soft); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+.cov-bg  { background: rgba(255,255,255,0.07); border-radius: 4px; height: 8px; overflow: visible; position: relative; }
+.cov-fill { height: 8px; border-radius: 4px; position: relative; }
+.cov-target-line {
+  position: absolute;
+  top: -4px;
+  height: 16px;
+  width: 2px;
+  background: rgba(255,255,255,0.35);
+  border-radius: 1px;
+}
+.cov-target-line::after {
+  content: 'min';
+  position: absolute;
+  top: -14px;
+  left: 3px;
+  font-size: 8px;
+  color: rgba(255,255,255,0.35);
+  white-space: nowrap;
+  font-family: 'JetBrains Mono', monospace;
+}
+.fill-green  { background: linear-gradient(90deg, #059669, #34d399); }
+.fill-blue   { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+.fill-amber  { background: linear-gradient(90deg, #b45309, #fbbf24); }
+.fill-red    { background: linear-gradient(90deg, #b91c1c, #f87171); }
+
+/* ════════════════════════════════════════════════
+   PYRAMID
+════════════════════════════════════════════════ */
+.pyramid { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.pyr-level {
+  border-radius: 7px;
+  padding: 11px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.pyr-level small {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+.pyr-manual  { width: 200px; background: linear-gradient(90deg, #b91c1c, #dc2626); }
+.pyr-integ   { width: 310px; background: linear-gradient(90deg, #b45309, #d97706); }
+.pyr-unit    { width: 420px; background: linear-gradient(90deg, #1d4ed8, #3b82f6); }
+
+/* ════════════════════════════════════════════════
+   FLOW STEPS
+════════════════════════════════════════════════ */
+.flow { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; row-gap: 8px; }
+.flow-step {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  text-align: center;
+  font-size: 11.5px;
+  flex: 1;
+  position: relative;
+}
+.flow-step .fn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--teal);
+  display: block;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+.flow-arrow { display: flex; align-items: center; color: var(--muted); font-size: 16px; padding: 0 4px; flex-shrink: 0; }
+
+/* ════════════════════════════════════════════════
+   CHECKLIST
+════════════════════════════════════════════════ */
+.check-list { list-style: none; }
+.check-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 5px 0;
+  font-size: 13px;
+  color: var(--soft);
+  line-height: 1.5;
+}
+.ci { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.ci-ok   { color: var(--green); }
+.ci-warn { color: var(--amber); }
+.ci-fail { color: var(--red); }
+
+/* ════════════════════════════════════════════════
+   CODE BLOCK
+════════════════════════════════════════════════ */
+.code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 1.75;
+  color: #7dd3fc;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 14px;
+}
+.code .cm { color: #6b7280; }
+.code .ck { color: #c4b5fd; }
+.code .cv { color: #86efac; }
+.code .cs { color: #fde68a; }
+
+/* ════════════════════════════════════════════════
+   OWASP STATUS
+════════════════════════════════════════════════ */
+.st-ok   { color: #34d399; }
+.st-warn { color: #fbbf24; }
+.st-fail { color: #f87171; }
+
+/* ════════════════════════════════════════════════
+   SKILL METER
+════════════════════════════════════════════════ */
+.skill-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.skill-row { display: grid; grid-template-columns: minmax(145px, 1.35fr) auto auto; align-items: center; }
+.skill-name { font-size: 12px; color: var(--soft); width: auto; min-width: 0; }
+.skill-dots { display: flex; gap: 4px; }
+.dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--border);
+}
+.dot.on { background: var(--teal); }
+.dot.on-mid { background: var(--blue); }
+.dot.on-low { background: var(--amber); }
+.skill-tag {
+  max-width: 100%;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.skt-mid  { background: rgba(59,130,246,0.2); color: #93c5fd; }
+.skt-low  { background: rgba(245,158,11,0.2); color: #fde68a; }
+.skt-high { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+
+/* ════════════════════════════════════════════════
+   RISK QUADRANT
+════════════════════════════════════════════════ */
+.quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+  height: 260px;
+}
+.quad { border-radius: 10px; padding: 14px; display: flex; flex-direction: column; }
+.quad h4 { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 7px; }
+.quad p  { font-size: 11px; line-height: 1.55; opacity: 0.8; }
+.q-crit  { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); }
+.q-high  { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); }
+.q-med   { background: rgba(59,130,246,0.1);  border: 1px solid rgba(59,130,246,0.2); }
+.q-low   { background: rgba(16,185,129,0.1);  border: 1px solid rgba(16,185,129,0.2); }
+
+/* ════════════════════════════════════════════════
+   TIMELINE
+════════════════════════════════════════════════ */
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px; top: 6px; bottom: 6px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--red), var(--amber), var(--green));
+  border-radius: 1px;
+}
+.tl-item { position: relative; margin-bottom: 14px; }
+.tl-dot {
+  position: absolute;
+  left: -20px;
+  top: 4px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+}
+.tl-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.tl-title { font-size: 12.5px; color: var(--text); font-weight: 500; margin-bottom: 1px; }
+.tl-sub   { font-size: 11px; color: var(--muted); }
+
+/* ════════════════════════════════════════════════
+   DIVIDER
+════════════════════════════════════════════════ */
+.divider { height: 1px; background: var(--border); margin: 18px 0; }
+
+/* ════════════════════════════════════════════════
+   SCROLL INDICATOR
+════════════════════════════════════════════════ */
+.scroll-hint {
+  position: fixed;
+  bottom: 22px;
+  right: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.4s;
+}
+.scroll-hint svg { animation: bounce 1.6s ease-in-out infinite; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(4px)} }
+
+@media (max-width: 1440px), (max-height: 860px) {
+  .slide { padding: 30px 38px; }
+  h1.hero { font-size: 58px; }
+  h2.stitle { font-size: 30px; }
+  .sdesc { font-size: 14px; margin-bottom: 22px; }
+  .card { padding: 16px; }
+  .card p, .card li, table { font-size: 11.5px; }
+  .stat-n { font-size: 34px; }
+}
+
+@media (max-width: 1200px) {
+  #nav {
+    width: 176px;
+  }
+
+  #viewport {
+    margin-left: 176px;
+  }
+
+  .g2, .g-60-40, .g-55-45 {
+    grid-template-columns: 1fr;
+  }
+
+  .g3, .g4, .g5 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════════ -->
+<nav id="nav">
+  <div id="nav-header">
+    <div class="logo">StudentPortal</div>
+    <div class="sub">Testavimo strategija</div>
+  </div>
+  <div id="nav-list">
+    <a class="nav-item active" href="#s01"><span class="nav-num">01</span>Titulas</a>
+    <a class="nav-item" href="#s02"><span class="nav-num">02</span>Misija ir tikslai</a>
+    <a class="nav-item" href="#s03"><span class="nav-num">03</span>Komandos įgūdžiai</a>
+    <a class="nav-item" href="#s04"><span class="nav-num">04</span>Apribojimai</a>
+    <a class="nav-item" href="#s05"><span class="nav-num">05</span>Projekto pobūdis</a>
+    <a class="nav-item" href="#s06"><span class="nav-num">06</span>Sistemos apžvalga</a>
+    <a class="nav-item" href="#s07"><span class="nav-num">07</span>Testavimo piramidė</a>
+    <a class="nav-item" href="#s08"><span class="nav-num">08</span>Strategija</a>
+    <a class="nav-item" href="#s09"><span class="nav-num">09</span>Unit testai (BE)</a>
+    <a class="nav-item" href="#s10"><span class="nav-num">10</span>Unit testai (FE)</a>
+    <a class="nav-item" href="#s11"><span class="nav-num">11</span>Kodo padengimas</a>
+    <a class="nav-item" href="#s12"><span class="nav-num">12</span>Testavimo procesas</a>
+    <a class="nav-item" href="#s13"><span class="nav-num">13</span>Rizikų matrica</a>
+    <a class="nav-item" href="#s14"><span class="nav-num">14</span>Defektai</a>
+    <a class="nav-item" href="#s15"><span class="nav-num">15</span>Saugumas (OWASP)</a>
+    <a class="nav-item" href="#s16"><span class="nav-num">16</span>Įrankiai</a>
+    <a class="nav-item" href="#s17"><span class="nav-num">17</span>Išvados</a>
+  </div>
+  <div id="nav-footer">
+    <span id="progress-label">1 / 17</span>
+    <div class="progress-bar"><div class="progress-fill" id="pbar"></div></div>
+  </div>
+</nav>
+
+<div id="viewport">
+
+<!-- ════════════════════════════════════════════
+  01 · HERO
+════════════════════════════════════════════ -->
+<section class="slide s-ink" id="s01">
+  <div class="orb orb-tl"></div>
+  <div class="orb orb-br"></div>
+  <div class="s-counter">01 / 17</div>
+
+  <div class="eyebrow ey-teal">Testavimo strategija &amp; ataskaita · 2026-03-14</div>
+  <h1 class="hero">Student<br><span>Portal</span></h1>
+  <p class="sdesc">React 19 · .NET 8 · SQL Server 2022 · Docker Compose<br>JWT + BCrypt · feature/docker</p>
+
+  <div class="g4" style="margin-top:8px; max-width:640px;">
+    <div class="stat">
+      <div class="stat-n c-teal">64</div>
+      <div class="stat-l">Iš viso testų</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n c-green">100%</div>
+      <div class="stat-l">Praeinamumas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n c-blue">~75%</div>
+      <div class="stat-l">BE padengimas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n c-amber">6</div>
+      <div class="stat-l">Defektai</div>
+    </div>
+  </div>
+
+  <div style="margin-top:28px; display:flex; gap:10px; flex-wrap:wrap;">
+    <span class="badge b-p1">1 × P1 Kritinis</span>
+    <span class="badge b-p2">3 × P2 Aukštas</span>
+    <span class="badge b-p3">2 × P3 Vidutinis</span>
+    <span style="font-size:11px; color:var(--muted); align-self:center; margin-left:4px;">— visi atviri, sprendžiama</span>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  02 · MISIJA IR TIKSLAI
+════════════════════════════════════════════ -->
+<section class="slide s-teal" id="s02">
+  <div class="orb orb-tl" style="background:var(--teal);"></div>
+  <div class="s-counter">02 / 17</div>
+
+  <div class="eyebrow ey-teal">Misija ir tikslai</div>
+  <h2 class="stitle">Komandos misija</h2>
+  <div style="background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.2); border-radius:10px; padding:16px 20px; margin-bottom:22px; max-width:700px;">
+    <p style="font-size:14.5px; color:#e2f8fa; line-height:1.65; font-style:italic;">
+      „Užtikrinti, kad StudentPortal sistema veiktų patikimai, saugiai ir atitiktų visus funkcinius bei nefunkcinius reikalavimus prieš paleidimą į demo arba akademinę aplinką.“
+    </p>
+  </div>
+
+  <div class="g2" style="gap:18px;">
+    <div>
+      <table>
+        <thead><tr><th>#</th><th>Tikslas</th><th>Kriterijus</th></tr></thead>
+        <tbody>
+          <tr><td><span style="color:var(--red); font-weight:700;">T-01</span></td><td>Autentikacijos srautai</td><td>100 % auth testų praeina</td></tr>
+          <tr><td><span style="color:var(--red); font-weight:700;">T-02</span></td><td>Duomenų korektiškumas (CRUD)</td><td>Validacija blokuoja neleistinus duomenis</td></tr>
+          <tr><td><span style="color:var(--red); font-weight:700;">T-03</span></td><td>Rolių prieigos kontrolė</td><td>IDOR scenarijai tikrinami</td></tr>
+          <tr><td><span style="color:var(--amber); font-weight:700;">T-04</span></td><td>Saugumo spragų identifikavimas</td><td>OWASP A01–A07 peržiūra atlikta</td></tr>
+          <tr><td><span style="color:var(--amber); font-weight:700;">T-05</span></td><td>Docker aplinkos veikimas</td><td>3 konteineriai sveiki po up --build</td></tr>
+          <tr><td><span style="color:var(--blue); font-weight:700;">T-06</span></td><td>Kodo padengimas</td><td>BE ≥70 %, FE ≥60 %</td></tr>
+          <tr><td><span style="color:var(--blue); font-weight:700;">T-07</span></td><td>Rankinis FR testavimas</td><td>FR-01 – FR-05 praeina</td></tr>
+          <tr><td><span style="color:var(--green); font-weight:700;">T-08</span></td><td>API veiklos reikalavimai</td><td>Atsakymo laikas &lt; 500 ms</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="card card-teal" style="margin-bottom:14px;">
+        <div class="card-title" style="color:var(--teal);">Kas netestavama</div>
+        <ul>
+          <li>Produkcijos infrastruktūra</li>
+          <li>SQL Server pats (Microsoft garantija)</li>
+          <li>Apkrovos testavimas (&gt;100 vartotojų)</li>
+          <li>Mobiliosios platformos</li>
+          <li>Automatizuotas E2E (Selenium/Playwright)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">Priėmimo kriterijai</div>
+        <ul class="check-list" style="list-style:none; padding:0;">
+          <li><span class="ci ci-ok">✓</span>0 P1 defektų prieš release</li>
+          <li><span class="ci ci-ok">✓</span>0 P2 defektų arba patvirtintas atidėjimas</li>
+          <li><span class="ci ci-ok">✓</span>Visi unit testai praeina (100 %)</li>
+          <li><span class="ci ci-ok">✓</span>Backend padengimas ≥70 %</li>
+          <li><span class="ci ci-warn">⚠</span>Frontend padengimas ≥60 % <em>(neįvykdyta)</em></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  03 · KOMANDOS ĮGŪDŽIAI
+════════════════════════════════════════════ -->
+<section class="slide s-violet" id="s03">
+  <div class="orb orb-v"></div>
+  <div class="s-counter">03 / 17</div>
+
+  <div class="eyebrow ey-violet">Komanda</div>
+  <h2 class="stitle">Komandos įgūdžiai ir technikų pasirinkimas</h2>
+  <p class="sdesc-sm">Akademinė studentų komanda – vidutinis patirties lygis. Technikas pasirinkome pagal turimus įgūdžius.</p>
+
+  <div class="g2" style="gap:20px; align-items:start;">
+    <div class="card card-violet">
+      <div class="card-title" style="color:#c4b5fd;">Patirties žemėlapis</div>
+
+      <div class="skill-row"><span class="skill-name">Backend (.NET 8, EF Core)</span>
+        <div class="skill-dots"><div class="dot on-mid"></div><div class="dot on-mid"></div><div class="dot on-mid"></div><div class="dot"></div><div class="dot"></div></div>
+        <span class="skill-tag skt-mid">Vidutinė</span>
+      </div>
+      <div class="skill-row"><span class="skill-name">Frontend (React 19)</span>
+        <div class="skill-dots"><div class="dot on-mid"></div><div class="dot on-mid"></div><div class="dot on-mid"></div><div class="dot"></div><div class="dot"></div></div>
+        <span class="skill-tag skt-mid">Vidutinė</span>
+      </div>
+      <div class="skill-row"><span class="skill-name">Testavimas BE (xUnit)</span>
+        <div class="skill-dots"><div class="dot on-mid"></div><div class="dot on-mid"></div><div class="dot on-mid"></div><div class="dot"></div><div class="dot"></div></div>
+        <span class="skill-tag skt-mid">Vidutinė</span>
+      </div>
+      <div class="skill-row"><span class="skill-name">Testavimas FE (Jest/RTL)</span>
+        <div class="skill-dots"><div class="dot on-low"></div><div class="dot on-low"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <span class="skill-tag skt-low">Pradedantysis</span>
+      </div>
+      <div class="skill-row"><span class="skill-name">Integraciniai testai</span>
+        <div class="skill-dots"><div class="dot on-low"></div><div class="dot on-low"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <span class="skill-tag skt-low">Pradedantysis</span>
+      </div>
+      <div class="skill-row"><span class="skill-name">Saugumas (OWASP)</span>
+        <div class="skill-dots"><div class="dot on-low"></div><div class="dot on-low"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <span class="skill-tag skt-low">Žema–vidutinė</span>
+      </div>
+      <div class="skill-row"><span class="skill-name">Docker / CI/CD</span>
+        <div class="skill-dots"><div class="dot on-low"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        <span class="skill-tag skt-low">Žema</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="card card-violet" style="margin-bottom:14px;">
+        <div class="card-title" style="color:#c4b5fd;">Pasirinktos technikos (kodėl)</div>
+        <table style="font-size:11.5px;">
+          <thead><tr><th>Technika</th><th>Pagrindimas</th></tr></thead>
+          <tbody>
+            <tr><td>xUnit + AAA</td><td>Komanda turi patirties; greitai vykdomi</td></tr>
+            <tr><td>Jest + RTL</td><td>Paprasta mock'inti; HTML atspindimas</td></tr>
+            <tr><td>AspNetCore.Mvc.Testing</td><td>Esamos žinios, 5 testai jau parašyti</td></tr>
+            <tr><td>Rankinis + Swagger</td><td>Nereikia papildomo tooling</td></tr>
+            <tr><td>Ribinių reikšmių analizė</td><td>Pažymių validacijai (score 0–MaxScore)</td></tr>
+            <tr><td>OWASP rankinis review</td><td>Atitinka komandos patirtį</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card card-red">
+        <div class="card-title" style="color:#fca5a5;">Vengtinos technikos</div>
+        <ul>
+          <li>Automatizuotas E2E (Playwright/Selenium) – reikia papildomų žinių</li>
+          <li>Apkrovos / streso testavimas – nėra priemonių</li>
+          <li>Fuzzing – per pažengęs lygis</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  04 · APRIBOJIMAI
+════════════════════════════════════════════ -->
+<section class="slide s-deep" id="s04">
+  <div class="orb orb-br" style="background:var(--amber);"></div>
+  <div class="s-counter">04 / 17</div>
+
+  <div class="eyebrow ey-amber">Apribojimai</div>
+  <h2 class="stitle">Teisiniai, techniniai ir valdymo apribojimai</h2>
+
+  <div class="g3" style="align-items:start;">
+    <div class="card card-amber">
+      <div class="card-title" style="color:#fde68a;">⚖️ Teisiniai / norminiai</div>
+      <table style="font-size:11.5px;">
+        <tbody>
+          <tr>
+            <td style="padding:6px 0; border-bottom:1px solid var(--border); vertical-align:top; color:#fde68a; width:50px;">BDAR/GDPR</td>
+            <td style="padding:6px 0 6px 10px; border-bottom:1px solid var(--border);">Studentų pažymiai = asmens duomenys. BCrypt + JWT + prieigos kontrolė privaloma.</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0; border-bottom:1px solid var(--border); vertical-align:top; color:#fde68a;">OWASP Top 10</td>
+            <td style="padding:6px 0 6px 10px; border-bottom:1px solid var(--border);">Privaloma tikrinti A01–A07 pažeidžiamumus.</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0; vertical-align:top; color:#fde68a;">Akademiniai</td>
+            <td style="padding:6px 0 6px 10px;">Dokumentuojami visi etapai pagal kurso reikalavimus.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card card-blue">
+      <div class="card-title" style="color:#93c5fd;">🔧 Techniniai</div>
+      <ul>
+        <li><strong style="color:#93c5fd;">EF Core InMemory</strong> – nenaudoja realios SQL semantikos; UNIQUE ribojimų netikrina DB lygyje</li>
+        <li style="margin-top:7px;"><strong style="color:#93c5fd;">JWT raktas env kintamajame</strong> – docker-compose.yml eksponuoja jei nesaugioje vietoje</li>
+        <li style="margin-top:7px;"><strong style="color:#93c5fd;">SQL Server Express</strong> – max 10 GB, nėra HA/failover – netinka produkcijai</li>
+        <li style="margin-top:7px;"><strong style="color:#93c5fd;">nginx – nėra HTTPS</strong> – P1 defektas, kritinis apribojimas produkcijai</li>
+        <li style="margin-top:7px;"><strong style="color:#93c5fd;">Nėra CI/CD</strong> – testai nevykdomi automatiškai kiekvienam commit</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🗂️ Projekto valdymo</div>
+      <ul>
+        <li><strong style="color:var(--soft);">Riboti ištekliai</strong> – studentų komanda; prioritizuojami kritiniai testai</li>
+        <li style="margin-top:7px;"><strong style="color:var(--soft);">Akademiniai terminai</strong> – testavimas vykdomas lygiagrečiai su kūrimu</li>
+        <li style="margin-top:7px;"><strong style="color:var(--soft);">Nėra QA aplinkos</strong> – testavimas tik lokaliose Docker aplinkose</li>
+        <li style="margin-top:7px;"><strong style="color:var(--soft);">Kokybės standartai</strong> – ISO/IEC 25010, ISTQB geriausios praktikos</li>
+      </ul>
+      <div style="margin-top:14px; padding:10px; background:rgba(255,255,255,0.04); border-radius:7px; border:1px solid var(--border);">
+        <div style="font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:5px;">Darbų apimtys</div>
+        <div style="font-size:12px; color:var(--soft);">Iš viso suplanuota <strong style="color:var(--white);">95</strong> testų atvejų<br>Įvykdyta <strong style="color:var(--white);">~79</strong> · Praeina <strong style="color:var(--green);">~78</strong> · Nepavyko <strong style="color:var(--amber);">~1</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  05 · PROJEKTO POBŪDIS IR ŽLUGIMO RIZIKOS
+════════════════════════════════════════════ -->
+<section class="slide s-red" id="s05">
+  <div class="orb orb-r"></div>
+  <div class="s-counter">05 / 17</div>
+
+  <div class="eyebrow ey-red">Projekto pobūdis &amp; žlugimo rizikos</div>
+  <h2 class="stitle">Kas nutiktų, jei sistema sugestų?</h2>
+
+  <div class="g2" style="align-items:start;">
+    <div>
+      <div class="card card-teal" style="margin-bottom:14px;">
+        <div class="card-title" style="color:var(--teal);">Sistemos klasifikacija</div>
+        <p>StudentPortal yra <strong style="color:var(--white);">vidaus naudojimo edukacinis valdymo portalas (LMS)</strong> – ne medicinė, pramoninė ar finansinė sistema. Pavojus gyvybei ar aplinkai <strong style="color:var(--green);">nėra aktualūs</strong>.</p>
+        <div style="margin-top:12px;">
+          <table style="font-size:11.5px;">
+            <thead><tr><th>Duomenų tipas</th><th>Jautrumas</th><th>Apsauga</th></tr></thead>
+            <tbody>
+              <tr><td>Slaptažodžiai</td><td><span style="color:var(--red);">Labai aukštas</span></td><td>BCrypt ✓</td></tr>
+              <tr><td>Pažymiai</td><td><span style="color:var(--amber);">Aukštas</span></td><td>JWT rolės</td></tr>
+              <tr><td>Tvarkaraštis</td><td><span style="color:var(--blue);">Vidutinis</span></td><td>Auth ⚠</td></tr>
+              <tr><td>El. paštas</td><td><span style="color:var(--blue);">Vidutinis</span></td><td>BDAR</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:12px; color:var(--soft); margin-bottom:10px; font-family:'Syne',sans-serif; text-transform:uppercase; letter-spacing:1px;">Žlugimo scenarijų pasekmės</div>
+      <table style="font-size:12px;">
+        <thead><tr><th>Scenarijus</th><th>Žmonėms</th><th>Įmonei / sistemai</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="color:#fca5a5;">Duomenų nutekėjimas</td>
+            <td>Privatumo pažeidimas, akademinis žalas</td>
+            <td>Reputacija, BDAR atsakomybė</td>
+          </tr>
+          <tr>
+            <td style="color:#fca5a5;">Auth apėjimas</td>
+            <td>Neteisėta prieiga, akademinė apgaulė</td>
+            <td>Sistemos kompromitavimas</td>
+          </tr>
+          <tr>
+            <td style="color:#fca5a5;">DB korupcija</td>
+            <td>Pažymių praradimas</td>
+            <td>Akademinių duomenų praradimas</td>
+          </tr>
+          <tr>
+            <td style="color:#fbbf24;">IDOR pažeidimas</td>
+            <td>Studento privatumas pažeistas</td>
+            <td>Teisinė atsakomybė</td>
+          </tr>
+          <tr>
+            <td style="color:#6ee7b7;">Sistema nepaleidžiama</td>
+            <td>Vartotojai negali prisijungti</td>
+            <td>Akademinės veiklos sutrikdymas</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="card card-green" style="margin-top:14px;">
+        <div class="card-title" style="color:var(--green);">Svarbus kontekstas</div>
+        <p>Kadangi sistema <strong style="color:#86efac;">akademinė</strong>, pavojai gyvybei ar aplinkai neegzistuoja. Pagrindinės grėsmės – privatumo ir akademinių duomenų kompromitavimas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  06 · SISTEMOS APŽVALGA
+════════════════════════════════════════════ -->
+<section class="slide s-navy" id="s06">
+  <div class="orb orb-tl" style="opacity:0.12;"></div>
+  <div class="s-counter">06 / 17</div>
+
+  <div class="eyebrow ey-blue">Sistemos apžvalga</div>
+  <h2 class="stitle">Trijų lygių Docker architektūra</h2>
+
+  <div class="g3" style="margin-bottom:16px;">
+    <div class="card card-blue">
+      <div class="card-title" style="color:#60a5fa;">🌐 Frontend · port 3000</div>
+      <p><strong style="color:var(--white);">React 19</strong> SPA<br>Tailwind CSS 4 · nginx<br>React Router 7<br>JWT-decode · Axios</p>
+    </div>
+    <div class="card card-violet">
+      <div class="card-title" style="color:#a78bfa;">⚙️ Backend · port 5000</div>
+      <p><strong style="color:var(--white)">.NET 8</strong> Web API<br>EF Core 9 (SqlServer)<br>JWT HS256 · BCrypt<br>Swagger / REST</p>
+    </div>
+    <div class="card card-teal">
+      <div class="card-title" style="color:var(--teal);">🗄️ DB · port 1433</div>
+      <p><strong style="color:var(--white);">SQL Server 2022</strong><br>Express Edition<br>EF Core Migrations<br>Docker healthcheck</p>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="card-title">👤 Vartotojų rolės</div>
+      <ul>
+        <li><strong style="color:var(--teal);">Studentas</strong> – pažymiai, tvarkaraštis, profilis</li>
+        <li><strong style="color:var(--blue);">Dėstytojas</strong> – pažymių ir tvarkaraščio CRUD</li>
+        <li><strong style="color:var(--violet);">Administratorius</strong> – vartotojų valdymas</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 Kontroleriai</div>
+      <ul>
+        <li>AuthController (reg + login)</li>
+        <li>GradesController (CRUD)</li>
+        <li>ScheduleController (CRUD)</li>
+        <li>StudentController</li>
+        <li>UserController (admin)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">🌱 Seed vartotojai</div>
+      <div class="code" style="font-size:10.5px; line-height:1.7;">
+        student@test.com / Student123!<br>
+        teacher@test.com / Teacher123!<br>
+        admin@test.com&nbsp; / Admin123!
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  07 · TESTAVIMO PIRAMIDĖ
+════════════════════════════════════════════ -->
+<section class="slide s-deep" id="s07">
+  <div class="orb orb-br"></div>
+  <div class="s-counter">07 / 17</div>
+
+  <div class="eyebrow ey-violet">Architektūra</div>
+  <h2 class="stitle">Testavimo piramidė</h2>
+
+  <div class="g2" style="gap:40px; align-items:center;">
+    <div>
+      <div class="pyramid">
+        <div class="pyr-level pyr-manual">
+          <span>Rankinis testavimas</span>
+          <small>20 atvejų</small>
+        </div>
+        <div class="pyr-level pyr-integ" style="margin-top:5px;">
+          <span>Integraciniai testai</span>
+          <small>5 testai</small>
+        </div>
+        <div class="pyr-level pyr-unit" style="margin-top:5px;">
+          <span>Unit testai</span>
+          <small>33 BE + ~26 FE</small>
+        </div>
+      </div>
+      <div class="g3" style="margin-top:16px;">
+        <div class="stat" style="padding:12px;">
+          <div class="stat-n c-blue" style="font-size:28px;">~59</div>
+          <div class="stat-l">Unit testai</div>
+        </div>
+        <div class="stat" style="padding:12px;">
+          <div class="stat-n c-amber" style="font-size:28px;">5</div>
+          <div class="stat-l">Integraciniai</div>
+        </div>
+        <div class="stat" style="padding:12px;">
+          <div class="stat-n c-red" style="font-size:28px;">20</div>
+          <div class="stat-l">Rankiniai</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card card-blue" style="margin-bottom:14px;">
+        <div class="card-title" style="color:#93c5fd;">Pasirinkimo pagrindas</div>
+        <ul>
+          <li><strong style="color:#93c5fd;">Greitas grįžtamasis ryšys</strong> – unit testai &lt; 30 s</li>
+          <li style="margin-top:5px;"><strong style="color:#93c5fd;">Izoliacija</strong> – atskira in-memory DB kiekvienam testui</li>
+          <li style="margin-top:5px;"><strong style="color:#93c5fd;">Rizikų valdymas</strong> – saugumo komponentai testuoti pirmiausia</li>
+          <li style="margin-top:5px;"><strong style="color:#93c5fd;">Deterministiškumas</strong> – Guid.NewGuid() DB vardas apsaugo nuo taršos</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Testavimo tipų palyginimas</div>
+        <table style="font-size:11.5px;">
+          <thead><tr><th>Lygis</th><th>Greitis</th><th>Izoliac.</th><th>Tikrovė</th></tr></thead>
+          <tbody>
+            <tr><td>Unit</td><td style="color:#34d399;">&lt; 30s</td><td style="color:#34d399;">Aukšta</td><td style="color:#f87171;">Mock'ai</td></tr>
+            <tr><td>Integracinis</td><td style="color:#fbbf24;">1–5 min</td><td style="color:#fbbf24;">Vidutinė</td><td style="color:#fbbf24;">Vidutinė</td></tr>
+            <tr><td>Rankinis</td><td style="color:#f87171;">30–60 min</td><td style="color:#f87171;">Žema</td><td style="color:#34d399;">Aukšta</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  08 · STRATEGIJA
+════════════════════════════════════════════ -->
+<section class="slide s-teal" id="s08">
+  <div class="orb orb-tl"></div>
+  <div class="s-counter">08 / 17</div>
+
+  <div class="eyebrow ey-teal">Strategija</div>
+  <h2 class="stitle">Rizikų valdoma testavimo strategija</h2>
+
+  <div class="g2" style="gap:22px;">
+    <div>
+      <table style="margin-bottom:14px;">
+        <thead><tr><th>Tipas</th><th>Technologija</th><th>Apimtis</th></tr></thead>
+        <tbody>
+          <tr><td>Unit (BE)</td><td>xUnit + Moq + EF InMemory</td><td>Auth, Grades, Schedule</td></tr>
+          <tr><td>Unit (FE)</td><td>Jest + RTL + user-event</td><td>Login, Register, API</td></tr>
+          <tr><td>Integracinis</td><td>AspNetCore.Mvc.Testing</td><td>Duomenų srautai</td></tr>
+          <tr><td>Rankinis (FR)</td><td>Naršyklė + Swagger</td><td>FR-01 – FR-05</td></tr>
+          <tr><td>Saugumo</td><td>Rankinis OWASP A01–A07</td><td>JWT, IDOR, SQL</td></tr>
+          <tr><td>Ribinių reikšmių</td><td>Unit testai</td><td>Score 0 – MaxScore</td></tr>
+        </tbody>
+      </table>
+
+      <div class="card card-teal">
+        <div class="card-title" style="color:var(--teal);">Pagrindiniai principai</div>
+        <ul>
+          <li>Ankstyvas testavimas – testai kartu su kodu</li>
+          <li>Izoliacija – atskiras kontekstas kiekvienam testui</li>
+          <li>Deterministiškumas – nėra priklausomybių nuo aplinkos</li>
+          <li>Dokumentuotumas – konvencija: <code style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#67e8f9;">Metodas_Sąlyga_Rezultatas</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-title">AAA šablonas</div>
+        <div class="code">
+          <span class="cm">// Arrange</span><br>
+          <span class="ck">var</span> options = TestDbContextFactory.Create();<br>
+          <span class="ck">using var</span> ctx = <span class="ck">new</span> AppDbContext(options);<br>
+          ctx.Students.Add(<span class="ck">new</span> Student { ... });<br>
+          <span class="cm">// Act</span><br>
+          <span class="ck">var</span> result = <span class="ck">await</span> controller.Method(id);<br>
+          <span class="cm">// Assert</span><br>
+          Assert.IsType&lt;<span class="cv">OkObjectResult</span>&gt;(result);
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Izoliavimo mechanizmas</div>
+        <div class="code">
+          <span class="ck">var</span> options = <span class="ck">new</span> DbContextOptionsBuilder&lt;AppDbContext&gt;()<br>
+          &nbsp;&nbsp;.<span class="cv">UseInMemoryDatabase</span>(<span class="cs">Guid.NewGuid().ToString()</span>)<br>
+          &nbsp;&nbsp;.Options; <span class="cm">// ← unikali DB kiekvienam testui</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  09 · UNIT TESTAI BE
+════════════════════════════════════════════ -->
+<section class="slide s-navy" id="s09">
+  <div class="orb orb-br" style="background:var(--blue);"></div>
+  <div class="s-counter">09 / 17</div>
+
+  <div class="eyebrow ey-blue">Backend</div>
+  <h2 class="stitle">Unit testai — .NET 8 + xUnit · 33 testai</h2>
+
+  <div class="g2" style="gap:22px;">
+    <div>
+      <table style="margin-bottom:14px;">
+        <thead><tr><th>Kontroleris</th><th>Testų sk.</th><th>Padengimas</th><th>Statusas</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>AuthController</td><td>10</td>
+            <td><span style="color:var(--green);">~85%</span></td>
+            <td><span class="badge b-ok">✓ Pilnas</span></td>
+          </tr>
+          <tr>
+            <td>GradesController</td><td>13</td>
+            <td><span style="color:var(--green);">~85%</span></td>
+            <td><span class="badge b-ok">✓ Pilnas</span></td>
+          </tr>
+          <tr>
+            <td>ScheduleController</td><td>10</td>
+            <td><span style="color:var(--green);">~80%</span></td>
+            <td><span class="badge b-ok">✓ Pilnas</span></td>
+          </tr>
+          <tr>
+            <td>StudentController</td><td>~3</td>
+            <td><span style="color:var(--amber);">~50%</span></td>
+            <td><span class="badge b-warn">⚠ Dalinis</span></td>
+          </tr>
+          <tr>
+            <td><strong>UserController</strong></td><td><strong>0</strong></td>
+            <td><span style="color:var(--red);">0%</span></td>
+            <td><span class="badge b-fail">✗ Nėra</span></td>
+          </tr>
+          <tr style="border-top:1px solid rgba(255,255,255,0.12);">
+            <td><strong>Iš viso</strong></td><td><strong>33+</strong></td>
+            <td><strong style="color:var(--blue);">~75%</strong></td>
+            <td><span class="badge b-ok">✓ Tikslas &gt;70%</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="card card-blue">
+        <div class="card-title" style="color:#93c5fd;">Integraciniai testai (5 / 5 ✓)</div>
+        <div style="font-size:12px; color:var(--soft); line-height:1.8; font-family:'JetBrains Mono',monospace;">
+          ✓ GetAllGrades_ReturnsAllGrades<br>
+          ✓ GetGrades_FiltersByStudentId<br>
+          ✓ GetSchedule_FiltersByStudentId<br>
+          ✓ GetSchedule_FiltersByDayOfWeek<br>
+          ✓ DeleteSchedule_DoesNotAffectGrades
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card card-red" style="margin-bottom:14px;">
+        <div class="card-title" style="color:#fca5a5;">⚠ Trūkstami UserController testai</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#fca5a5; line-height:1.8;">
+          GetAllUsers_AsAdmin_ReturnsAllUsers<br>
+          GetAllUsers_AsStudent_ReturnsForbidden<br>
+          DeleteUser_LastAdmin_ReturnsBadRequest<br>
+          DeleteUser_AsNonAdmin_ReturnsForbidden<br>
+          UpdateUser_WithWrongPassword_ReturnsBadRequest
+        </div>
+        <p style="margin-top:8px; color:#f87171; font-size:11px;">Vertinamas laikas: ~4 val. → 2026-03-21</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">GradesController — tikrinti vertų testų pavyzdžiai</div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:10.5px; color:#86efac; line-height:1.8;">
+          ✓ AddGrade_WithScoreExceedingMax_ReturnsBadRequest<br>
+          ✓ AddGrade_WithNegativeScore_ReturnsBadRequest<br>
+          ✓ AddGrade_WithUnknownStudent_ReturnsBadRequest<br>
+          ✓ UpdateGrade_WithInvalidId_ReturnsNotFound<br>
+          ✓ DeleteGrade_WithValidId_ReturnsNoContent
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  10 · UNIT TESTAI FE
+════════════════════════════════════════════ -->
+<section class="slide s-violet" id="s10">
+  <div class="orb orb-v"></div>
+  <div class="s-counter">10 / 17</div>
+
+  <div class="eyebrow ey-violet">Frontend</div>
+  <h2 class="stitle">Unit testai — React 19 + Jest/RTL · ~26 testų</h2>
+
+  <div class="g2" style="gap:22px;">
+    <div>
+      <table>
+        <thead><tr><th>Failas</th><th>Sk.</th><th>Tipas</th><th>Statusas</th></tr></thead>
+        <tbody>
+          <tr><td>auth.test.js</td><td>8</td><td>API funkcijos</td><td><span class="badge b-ok">✓ Praeina</span></td></tr>
+          <tr><td>Login.test.js</td><td>6</td><td>Komponentas</td><td><span class="badge b-ok">✓ Praeina</span></td></tr>
+          <tr><td>Register.test.js</td><td>6</td><td>Komponentas</td><td><span class="badge b-ok">✓ Praeina</span></td></tr>
+          <tr><td>student.test.js</td><td>6</td><td>API funkcijos</td><td><span class="badge b-ok">✓ Praeina</span></td></tr>
+          <tr><td><strong>admin.js</strong></td><td>0</td><td>API funkcijos</td><td><span class="badge b-fail">✗ Nėra</span></td></tr>
+          <tr><td><strong>PrivateRoute.js</strong></td><td>0</td><td>Prieigos kontrolė</td><td><span class="badge b-fail">✗ Nėra</span></td></tr>
+          <tr><td><strong>Dashboard.js</strong></td><td>0</td><td>Komponentas</td><td><span class="badge b-fail">✗ Nėra</span></td></tr>
+          <tr><td><strong>AdminPage.js</strong></td><td>0</td><td>Komponentas</td><td><span class="badge b-fail">✗ Nėra</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="card card-violet" style="margin-bottom:14px;">
+        <div class="card-title" style="color:#c4b5fd;">Mock'inimo strategija</div>
+        <div class="code" style="font-size:10.5px;">
+          <span class="cm">// axios mock'inamas – jokių realių HTTP</span><br>
+          jest.mock(<span class="cs">'axios'</span>);<br>
+          <span class="cm">// localStorage</span><br>
+          jest.spyOn(Storage.prototype, <span class="cs">'getItem'</span>);<br>
+          <span class="cm">// jwt-decode – klaidos simuliavimui</span><br>
+          jest.mock(<span class="cs">'jwt-decode'</span>, () =&gt; ({<br>
+          &nbsp;&nbsp;jwtDecode: jest.fn()<br>
+          }));
+        </div>
+      </div>
+
+      <div class="card card-red">
+        <div class="card-title" style="color:#fca5a5;">Kritinis trūkstamas testas</div>
+        <div class="code" style="font-size:10.5px; color:#fca5a5;">
+          <span class="cm">// PrivateRoute – IDOR rizika FE pusėje</span><br>
+          test(<span class="cs">'StudentAccessingTeacherRoute_RedirectsToUnauthorized'</span>)<br><br>
+          <span class="cm">// Dashboard – rolių peržiūros izoliacija</span><br>
+          test(<span class="cs">'Dashboard_AsStudent_ShowsStudentContent'</span>)
+        </div>
+        <p style="margin-top:8px; color:#fbbf24; font-size:11px;">FE padengimas dabar ~38 % (tikslas ≥60 %)</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  11 · KODO PADENGIMAS
+════════════════════════════════════════════ -->
+<section class="slide s-deep" id="s11">
+  <div class="orb orb-tl" style="background:var(--green);"></div>
+  <div class="s-counter">11 / 17</div>
+
+  <div class="eyebrow ey-green">Kodo padengimas</div>
+  <h2 class="stitle">Metrikos — Coverlet (BE) · Jest --coverage (FE)</h2>
+
+  <div class="g2" style="gap:40px; align-items:start;">
+    <div>
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted); margin-bottom:14px;">Backend · tikslas ≥ 70 %</div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span>AuthController</span><span style="color:var(--green);">~85%</span></div>
+        <div class="cov-bg"><div class="cov-fill fill-green" style="width:85%;"></div></div>
+      </div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span>GradesController</span><span style="color:var(--green);">~85%</span></div>
+        <div class="cov-bg"><div class="cov-fill fill-green" style="width:85%;"></div></div>
+      </div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span>ScheduleController</span><span style="color:var(--green);">~80%</span></div>
+        <div class="cov-bg"><div class="cov-fill fill-green" style="width:80%;"></div></div>
+      </div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span>StudentController</span><span style="color:var(--amber);">~50%</span></div>
+        <div class="cov-bg"><div class="cov-fill fill-amber" style="width:50%;"></div></div>
+      </div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span>UserController</span><span style="color:var(--red);">0%</span></div>
+        <div class="cov-bg"><div class="cov-fill fill-red" style="width:2%;"></div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span><strong>Bendras BE</strong></span><span style="color:var(--green);"><strong>~75% ✓</strong></span></div>
+        <div class="cov-bg">
+          <div class="cov-fill fill-green" style="width:75%;"></div>
+          <div class="cov-target-line" style="left:70%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted); margin-bottom:14px;">Frontend · tikslas ≥ 60 %</div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span>auth.js</span><span style="color:var(--green);">~90%</span></div>
+        <div class="cov-bg"><div class="cov-fill fill-green" style="width:90%;"></div></div>
+      </div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span>student.js</span><span style="color:var(--green);">~70%</span></div>
+        <div class="cov-bg"><div class="cov-fill fill-green" style="width:70%;"></div></div>
+      </div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span>Login.js</span><span style="color:var(--amber);">~60%</span></div>
+        <div class="cov-bg"><div class="cov-fill fill-amber" style="width:60%;"></div></div>
+      </div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span>admin.js</span><span style="color:var(--red);">0%</span></div>
+        <div class="cov-bg"><div class="cov-fill fill-red" style="width:2%;"></div></div>
+      </div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span>PrivateRoute.js</span><span style="color:var(--red);">0%</span></div>
+        <div class="cov-bg"><div class="cov-fill fill-red" style="width:2%;"></div></div>
+      </div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span>Dashboard.js</span><span style="color:var(--red);">0%</span></div>
+        <div class="cov-bg"><div class="cov-fill fill-red" style="width:2%;"></div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="cov-row">
+        <div class="cov-lbl"><span><strong>Bendras FE</strong></span><span style="color:var(--red);"><strong>~38% ✗</strong></span></div>
+        <div class="cov-bg">
+          <div class="cov-fill fill-red" style="width:38%;"></div>
+          <div class="cov-target-line" style="left:60%;"></div>
+        </div>
+      </div>
+      <p style="font-size:11px; color:var(--muted); margin-top:8px;">Sprendimas: admin.js + PrivateRoute testai (~4 val.) → +22 pp padengimo</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  12 · TESTAVIMO PROCESAS
+════════════════════════════════════════════ -->
+<section class="slide s-teal" id="s12">
+  <div class="orb orb-tl"></div>
+  <div class="s-counter">12 / 17</div>
+
+  <div class="eyebrow ey-teal">Procesas</div>
+  <h2 class="stitle">Testavimo proceso valdymas</h2>
+
+  <div class="flow" style="margin-bottom:22px;">
+    <div class="flow-step"><span class="fn">1</span>Reikalavimai<br><small style="font-size:10px; color:var(--muted);">FR-01–FR-05</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><span class="fn">2</span>Testų dizainas<br><small style="font-size:10px; color:var(--muted);">Unit + rankinis</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><span class="fn">3</span>Aplinkos paruoš.<br><small style="font-size:10px; color:var(--muted);">Docker Compose</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><span class="fn">4</span>Vykdymas<br><small style="font-size:10px; color:var(--muted);">dotnet + npm</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><span class="fn">5</span>Defektų valdymas<br><small style="font-size:10px; color:var(--muted);">Reg → Prior → Fix</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><span class="fn">6</span>Ataskaita<br><small style="font-size:10px; color:var(--muted);">Šis dokumentas</small></div>
+  </div>
+
+  <div class="g3">
+    <div class="card card-teal">
+      <div class="card-title" style="color:var(--teal);">Backend testai</div>
+      <div class="code" style="font-size:10px;">
+        cd StudentPortal.Tests<br>
+        dotnet test \<br>
+        &nbsp;--collect:"XPlat Code Coverage" \<br>
+        &nbsp;--results-directory TestResults/<br>
+        dotnet reportgenerator \<br>
+        &nbsp;-reports:"*/coverage.cobertura.xml" \<br>
+        &nbsp;-targetdir:coveragereport \<br>
+        &nbsp;-reporttypes:Html
+      </div>
+    </div>
+    <div class="card card-violet">
+      <div class="card-title" style="color:#c4b5fd;">Frontend testai</div>
+      <div class="code" style="font-size:10px;">
+        cd student-portal<br>
+        npm test -- \<br>
+        &nbsp;--coverage \<br>
+        &nbsp;--watchAll=false \<br>
+        &nbsp;--forceExit<br><br>
+        <span class="cm"># padengimas: coverage/</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Rankinis (Docker)</div>
+      <div class="code" style="font-size:10px;">
+        docker-compose up --build<br><br>
+        <span class="cm"># FE:</span>   localhost:3000<br>
+        <span class="cm"># API:</span>  localhost:5000/swagger<br>
+        <span class="cm"># DB:</span>   localhost:1433<br><br>
+        <span class="cm"># Healthcheck tikrina</span><br>
+        <span class="cm"># kas 5s iki 30 bandymų</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  13 · RIZIKŲ MATRICA
+════════════════════════════════════════════ -->
+<section class="slide s-red" id="s13">
+  <div class="orb orb-r"></div>
+  <div class="s-counter">13 / 17</div>
+
+  <div class="eyebrow ey-red">Rizikos</div>
+  <h2 class="stitle">Rizikų identifikavimas ir prioritetai</h2>
+
+  <div class="g2" style="gap:24px; align-items:start;">
+    <div>
+      <div style="display:grid; grid-template-columns:18px 1fr; gap:8px; align-items:center;">
+        <div style="writing-mode:vertical-rl; transform:rotate(180deg); font-size:9px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; text-align:center;">TIKIMYBĖ ↑</div>
+        <div>
+          <div class="quad-grid">
+            <div class="quad q-crit">
+              <h4 style="color:#fca5a5;">🔴 Aukšta / Kritinis</h4>
+              <p>HTTPS trūkumas nginx<br>IDOR – studentų izoliacija<br>ScheduleController be [Authorize]</p>
+            </div>
+            <div class="quad q-high">
+              <h4 style="color:#fde68a;">🟡 Žema / Aukštas</h4>
+              <p>Paskutinio admin apsauga<br>JWT raktas aplinkoje<br>UserController be testų</p>
+            </div>
+            <div class="quad q-med">
+              <h4 style="color:#93c5fd;">🔵 Aukšta / Vidutinis</h4>
+              <p>InMemory vs realios SQL sąlygos<br>admin.js be testų<br>PrivateRoute be testų</p>
+            </div>
+            <div class="quad q-low">
+              <h4 style="color:#6ee7b7;">🟢 Žema / Žemas</h4>
+              <p>WeatherForecastController<br>SQL Server Express riba<br>@testing-library versija</p>
+            </div>
+          </div>
+          <div style="font-size:9px; color:var(--muted); text-align:center; margin-top:5px; letter-spacing:1px; text-transform:uppercase;">← POVEIKIS / KRITINUMAS →</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <table>
+        <thead><tr><th>ID</th><th>Rizika</th><th>OWASP</th><th>Prior.</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:'JetBrains Mono',monospace; font-size:10px;">R-CRIT-01</td><td>HTTPS nekonfigūruotas</td><td>A04, A02</td><td><span class="badge b-p1">P1</span></td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace; font-size:10px;">R-HIGH-01</td><td>ScheduleController be [Authorize]</td><td>A01</td><td><span class="badge b-p2">P2</span></td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace; font-size:10px;">R-HIGH-02</td><td>IDOR – studentų duomenys</td><td>A01</td><td><span class="badge b-p2">P2</span></td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace; font-size:10px;">R-HIGH-03</td><td>UserController be testų</td><td>—</td><td><span class="badge b-p2">P2</span></td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace; font-size:10px;">R-HIGH-04</td><td>admin.js be testų</td><td>—</td><td><span class="badge b-p2">P2</span></td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace; font-size:10px;">R-MED-01</td><td>WeatherForecastController</td><td>A05</td><td><span class="badge b-p3">P3</span></td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace; font-size:10px;">R-MED-02</td><td>JWT raktas env kintamajame</td><td>A02</td><td><span class="badge b-p3">P3</span></td></tr>
+          <tr><td style="font-family:'JetBrains Mono',monospace; font-size:10px;">R-MED-03</td><td>PrivateRoute be testų</td><td>—</td><td><span class="badge b-p3">P3</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  14 · DEFEKTAI IR SPRENDIMŲ TVARKARAŠTIS
+════════════════════════════════════════════ -->
+<section class="slide s-red" id="s14">
+  <div class="orb orb-r"></div>
+  <div class="s-counter">14 / 17</div>
+
+  <div class="eyebrow ey-red">Defektai</div>
+  <h2 class="stitle">Aptikti defektai ir sprendimų tvarkaraštis</h2>
+
+  <div class="g-55-45" style="align-items:start;">
+    <div>
+      <table>
+        <thead><tr><th>ID</th><th>Aprašymas</th><th>P</th><th>Sprendimas</th><th>Statusas</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#fca5a5;">DEF-006</td>
+            <td>HTTPS nekonfigūruotas nginx</td>
+            <td><span class="badge b-p1">P1</span></td>
+            <td>Let's Encrypt SSL</td>
+            <td><span class="badge b-open">Atv.</span></td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#fde68a;">DEF-002</td>
+            <td>ScheduleController be [Authorize]</td>
+            <td><span class="badge b-p2">P2</span></td>
+            <td>Pridėti [Authorize]</td>
+            <td><span class="badge b-open">Atv.</span></td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#fde68a;">DEF-001</td>
+            <td>UserController – nėra unit testų</td>
+            <td><span class="badge b-p2">P2</span></td>
+            <td>~5–6 xUnit testų</td>
+            <td><span class="badge b-open">Atv.</span></td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#fde68a;">DEF-004</td>
+            <td>admin.js FE API be testų</td>
+            <td><span class="badge b-p2">P2</span></td>
+            <td>Jest unit testai</td>
+            <td><span class="badge b-open">Atv.</span></td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#93c5fd;">DEF-005</td>
+            <td>PrivateRoute.js be testų</td>
+            <td><span class="badge b-p3">P3</span></td>
+            <td>RTL testai</td>
+            <td><span class="badge b-open">Atv.</span></td>
+          </tr>
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace; font-size:10px; color:#93c5fd;">DEF-003</td>
+            <td>WeatherForecastController lieka</td>
+            <td><span class="badge b-p3">P3</span></td>
+            <td>Ištrinti failą</td>
+            <td><span class="badge b-open">Atv.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:12px;">Sprendimų tvarkaraštis</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--red);"></div>
+          <div class="tl-date">2026-03-15 — 2026-03-16</div>
+          <div class="tl-title">DEF-002 · ScheduleController [Authorize]</div>
+          <div class="tl-sub">~30 min · Tiesioginis pataisymas</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--red);"></div>
+          <div class="tl-date">2026-03-15 — 2026-03-17</div>
+          <div class="tl-title">DEF-006 · HTTPS nginx konfigūracija</div>
+          <div class="tl-sub">~2 val. · P1 Kritinis</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--amber);"></div>
+          <div class="tl-date">2026-03-17 — 2026-03-21</div>
+          <div class="tl-title">DEF-001 · UserController unit testai</div>
+          <div class="tl-sub">~4 val. · 5–6 xUnit testai</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--amber);"></div>
+          <div class="tl-date">2026-03-18 — 2026-03-21</div>
+          <div class="tl-title">DEF-004 · admin.js + PrivateRoute testai</div>
+          <div class="tl-sub">~4 val. · FE padengimas: ~38% → ~60%</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--blue);"></div>
+          <div class="tl-date">2026-03-21+</div>
+          <div class="tl-title">DEF-003 · WeatherForecast + IDOR apsauga</div>
+          <div class="tl-sub">~3,5 val. · P3 + ilgalaikė priemonė</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  15 · SAUGUMAS OWASP
+════════════════════════════════════════════ -->
+<section class="slide s-navy" id="s15">
+  <div class="orb orb-br" style="background:var(--amber);"></div>
+  <div class="s-counter">15 / 17</div>
+
+  <div class="eyebrow ey-amber">Saugumas</div>
+  <h2 class="stitle">OWASP Top 10 tikrinimas</h2>
+
+  <div class="g2" style="gap:24px;">
+    <div>
+      <table>
+        <thead><tr><th>OWASP</th><th>Kategorija</th><th>Statusas</th></tr></thead>
+        <tbody>
+          <tr><td>A01</td><td>Prieigos kontrolės klaidos (IDOR)</td><td><span class="st-warn">⚠ Dalinis</span></td></tr>
+          <tr><td>A02</td><td>Kriptografiniai gedimai</td><td><span class="st-ok">✓ BCrypt + JWT</span></td></tr>
+          <tr><td>A03</td><td>Injekcija (SQL, XSS)</td><td><span class="st-ok">✓ EF Core ORM</span></td></tr>
+          <tr><td>A04</td><td>Nesaugus dizainas (HTTPS)</td><td><span class="st-fail">✗ HTTP only – P1</span></td></tr>
+          <tr><td>A05</td><td>Saugumo konfigūracijos klaidos</td><td><span class="st-ok">✓ env kintamieji</span></td></tr>
+          <tr><td>A06</td><td>Pasenusios komponentės</td><td><span class="st-warn">⚠ Tikrinti (npm audit)</span></td></tr>
+          <tr><td>A07</td><td>Autentikacijos klaidos</td><td><span class="st-ok">✓ JWT + BCrypt</span></td></tr>
+          <tr><td>A09</td><td>Registravimo klaidos</td><td><span class="st-fail">✗ Nėra logging</span></td></tr>
+          <tr><td>A10</td><td>SSRF</td><td><span class="st-ok">✓ Neaktualu</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="card card-red" style="margin-bottom:14px;">
+        <div class="card-title" style="color:#fca5a5;">IDOR tikrinimo scenarijus (A01)</div>
+        <div class="code" style="font-size:10.5px; color:#fca5a5;">
+          <span class="cm">1. Prisijungti kaip Studentas A</span><br>
+          GET /api/grades/{studento_B_id}<br>
+          Authorization: Bearer {studento_A_JWT}<br><br>
+          <span class="cm">Laukiama: 403 Forbidden</span><br>
+          <span style="color:#fbbf24;">⚠ Dabar: galima grąžina duomenis!</span>
+        </div>
+      </div>
+      <div class="card card-green">
+        <div class="card-title" style="color:var(--green);">JWT saugumo tikrinimas (A07)</div>
+        <div class="code" style="font-size:10.5px; color:#86efac;">
+          <span class="cm">1. Modifikuoti JWT payload</span><br>
+          &nbsp;&nbsp;&nbsp;{ role: "Admin" } ← suklastotas<br>
+          <span class="cm">2. GET /api/users su suklastotu JWT</span><br>
+          <span class="cm">3. Laukiama: 401 Unauthorized ✓</span><br>
+          &nbsp;&nbsp;&nbsp;(parašo tikrinimas veikia)
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  16 · ĮRANKIAI
+════════════════════════════════════════════ -->
+<section class="slide s-deep" id="s16">
+  <div class="orb orb-tl" style="background:var(--violet);"></div>
+  <div class="s-counter">16 / 17</div>
+
+  <div class="eyebrow ey-violet">Įrankiai</div>
+  <h2 class="stitle">Testavimo įrankių ekosistema</h2>
+
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px;">
+    <div class="card card-blue" style="text-align:center; padding:16px;">
+      <div style="font-size:28px; margin-bottom:8px;">🧪</div>
+      <div class="card-title">xUnit 2.5.3</div>
+      <p>Unit testų karkasas<br><code style="font-size:9px; color:#7dd3fc; font-family:'JetBrains Mono',monospace;">dotnet test</code></p>
+    </div>
+    <div class="card card-violet" style="text-align:center; padding:16px;">
+      <div style="font-size:28px; margin-bottom:8px;">🃏</div>
+      <div class="card-title">Jest 27+ + RTL</div>
+      <p>Frontend testai<br>React Testing Library 16<br><code style="font-size:9px; color:#c4b5fd; font-family:'JetBrains Mono',monospace;">npm test</code></p>
+    </div>
+    <div class="card card-teal" style="text-align:center; padding:16px;">
+      <div style="font-size:28px; margin-bottom:8px;">🗄️</div>
+      <div class="card-title">EF Core InMemory</div>
+      <p>Izoliuota DB testui<br>Guid.NewGuid() vardas</p>
+    </div>
+    <div class="card card-blue" style="text-align:center; padding:16px;">
+      <div style="font-size:28px; margin-bottom:8px;">🌐</div>
+      <div class="card-title">AspNetCore Testing</div>
+      <p>Integraciniai testai<br>WebApplicationFactory<br>In-process HTTP</p>
+    </div>
+    <div class="card" style="text-align:center; padding:16px;">
+      <div style="font-size:28px; margin-bottom:8px;">📊</div>
+      <div class="card-title">Coverlet 6.0</div>
+      <p>BE kodo padengimas<br>Cobertura XML<br>HTML ataskaitos</p>
+    </div>
+    <div class="card" style="text-align:center; padding:16px;">
+      <div style="font-size:28px; margin-bottom:8px;">🐳</div>
+      <div class="card-title">Docker Compose</div>
+      <p>Pilna aplinka<br>3 konteineriai<br>Healthchecks SQL</p>
+    </div>
+    <div class="card" style="text-align:center; padding:16px;">
+      <div style="font-size:28px; margin-bottom:8px;">📖</div>
+      <div class="card-title">Swagger UI</div>
+      <p>Rankinis API<br>testavimas<br>/swagger</p>
+    </div>
+    <div class="card" style="text-align:center; padding:16px;">
+      <div style="font-size:28px; margin-bottom:8px;">🔵</div>
+      <div class="card-title">Moq 4.20.72</div>
+      <p>Mock objektai<br>Priklausomybių<br>izoliacija</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════
+  17 · IŠVADOS
+════════════════════════════════════════════ -->
+<section class="slide s-green" id="s17">
+  <div class="orb orb-tl" style="background:var(--green);"></div>
+  <div class="s-counter">17 / 17</div>
+
+  <div class="eyebrow ey-green">Išvados</div>
+  <h2 class="stitle">Rezultatai ir veiksmai į priekį</h2>
+
+  <div class="g2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:10px;">✅ Pasiekta</div>
+      <ul class="check-list" style="margin-bottom:18px;">
+        <li><span class="ci ci-ok">✓</span>Visi 64 testai praeina — 100 % praeinamumas</li>
+        <li><span class="ci ci-ok">✓</span>Backend kodo padengimas ~75 % (tikslas ≥70 %)</li>
+        <li><span class="ci ci-ok">✓</span>BCrypt + JWT autentikacija pilnai patikrinta</li>
+        <li><span class="ci ci-ok">✓</span>Pažymių ribinių reikšmių validacija padengta</li>
+        <li><span class="ci ci-ok">✓</span>Docker Compose aplinka veikia stabiliai</li>
+        <li><span class="ci ci-ok">✓</span>AAA šablonas nuosekliai taikomas visuose testuose</li>
+        <li><span class="ci ci-ok">✓</span>OWASP Top 10 peržiūra atlikta</li>
+      </ul>
+
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:10px;">⚠ Nebaigta / sprendžiama</div>
+      <ul class="check-list">
+        <li><span class="ci ci-fail">✗</span>HTTPS nginx — <strong style="color:#fca5a5;">P1 Kritinis</strong> — iki 2026-03-17</li>
+        <li><span class="ci ci-fail">✗</span>ScheduleController [Authorize] — P2 — iki 2026-03-16</li>
+        <li><span class="ci ci-warn">⚠</span>IDOR apsauga GradesController — P2 — iki 2026-03-21</li>
+        <li><span class="ci ci-warn">⚠</span>Frontend padengimas ~38 % (tikslas ≥60 %) — iki 2026-03-21</li>
+        <li><span class="ci ci-warn">⚠</span>UserController unit testai — P2 — iki 2026-03-21</li>
+        <li><span class="ci ci-warn">⚠</span>CI/CD pipeline (GitHub Actions) — ateities planas</li>
+      </ul>
+    </div>
+
+    <div>
+      <table style="margin-bottom:16px;">
+        <thead><tr><th>Kriterijus</th><th>Tikslas</th><th>Pasiekta</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Unit testai (BE)</td><td>100%</td><td>100%</td><td><span class="badge b-ok">✓</span></td></tr>
+          <tr><td>Unit testai (FE)</td><td>100%</td><td>100%</td><td><span class="badge b-ok">✓</span></td></tr>
+          <tr><td>Integraciniai</td><td>100%</td><td>100%</td><td><span class="badge b-ok">✓</span></td></tr>
+          <tr><td>BE kodo padengimas</td><td>≥70%</td><td>~75%</td><td><span class="badge b-ok">✓</span></td></tr>
+          <tr><td>FE kodo padengimas</td><td>≥60%</td><td>~38%</td><td><span class="badge b-fail">✗</span></td></tr>
+          <tr><td>P1 defektai</td><td>0</td><td>1</td><td><span class="badge b-fail">✗</span></td></tr>
+          <tr><td>P2 defektai</td><td>0</td><td>3</td><td><span class="badge b-warn">⚠</span></td></tr>
+          <tr><td>Docker aplinka</td><td>Veikia</td><td>Veikia</td><td><span class="badge b-ok">✓</span></td></tr>
+        </tbody>
+      </table>
+
+      <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); border-radius:10px; padding:14px 16px; text-align:center;">
+        <div style="font-family:'Syne',sans-serif; font-size:14px; font-weight:700; color:#6ee7b7; margin-bottom:5px;">Bendras vertinimas</div>
+        <div style="font-size:12.5px; color:#a7f3d0; line-height:1.6;">
+          Sistema paruošta <strong>demo / akademinei aplinkai</strong>.<br>
+          Prieš produkcinį diegimą — spręsti <span style="color:#fca5a5;">P1</span> ir <span style="color:#fde68a;">P2</span> defektus.
+        </div>
+        <div style="margin-top:10px; font-size:10px; color:rgba(167,243,208,0.5); font-family:'JetBrains Mono',monospace;">
+          StudentPortal · feature/docker · 2026-03-14
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /viewport -->
+
+<!-- scroll hint -->
+<div class="scroll-hint" id="hint">
+  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  Scroll
+</div>
+
+<script>
+  const viewport = document.getElementById('viewport');
+  const slides   = document.querySelectorAll('.slide');
+  const navItems = document.querySelectorAll('.nav-item');
+  const pbar     = document.getElementById('pbar');
+  const plabel   = document.getElementById('progress-label');
+  const hint     = document.getElementById('hint');
+  const total    = slides.length;
+
+  function updateNav(idx) {
+    navItems.forEach((n, i) => n.classList.toggle('active', i === idx));
+    pbar.style.width = ((idx + 1) / total * 100) + '%';
+    plabel.textContent = (idx + 1) + ' / ' + total;
+    hint.style.opacity = idx >= total - 1 ? '0' : '1';
+  }
+
+  viewport.addEventListener('scroll', () => {
+    const st = viewport.scrollTop;
+    const vh = viewport.clientHeight;
+    let cur = 0;
+    slides.forEach((s, i) => {
+      if (s.offsetTop <= st + vh * 0.5) cur = i;
+    });
+    updateNav(cur);
+  });
+
+  // keyboard nav
+  document.addEventListener('keydown', e => {
+    const st = viewport.scrollTop;
+    const vh = viewport.clientHeight;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+      e.preventDefault();
+      viewport.scrollBy({ top: vh, behavior: 'smooth' });
+    }
+    if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+      e.preventDefault();
+      viewport.scrollBy({ top: -vh, behavior: 'smooth' });
+    }
+  });
+
+  updateNav(0);
+</script>
+</body>
+</html>
