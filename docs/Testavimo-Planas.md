@@ -1,365 +1,243 @@
-# StudentPortal – Testavimo Planas
-
-**Versija:** 1.0  
-**Data:** 2026-03-14  
-**Projektas:** StudentPortal  
-**Šaka:** feature/docker  
-
----
+# Testavimo Planas – StudentPortal
 
 ## Turinys
 
-1. [Įvadas](#1-įvadas)
-2. [Komandos įgūdžiai ir patirtis](#2-komandos-įgūdžiai-ir-patirtis)
-3. [Testavimo tikslai ir komandos misija](#3-testavimo-tikslai-ir-komandos-misija)
-4. [Apribojimai](#4-apribojimai)
-5. [Projekto ir verslo pobūdis](#5-projekto-ir-verslo-pobūdis)
-6. [Rizikos vertinimas](#6-rizikos-vertinimas)
-7. [Testavimo apimtis](#7-testavimo-apimtis)
-8. [Testavimo metodai ir technikos](#8-testavimo-metodai-ir-technikos)
-9. [Testavimo aplinka](#9-testavimo-aplinka)
-10. [Tvarkaraštis ir etapai](#10-tvarkaraštis-ir-etapai)
-11. [Priedai](#11-priedai)
+1. [Komandos įgūdžiai ir patirtis](#1-komandos-įgūdžiai-ir-patirtis)
+2. [Testavimo tikslai ir komandos misija](#2-testavimo-tikslai-ir-komandos-misija)
+3. [Apribojimai](#3-apribojimai)
+4. [Projekto ir verslo pobūdis](#4-projekto-ir-verslo-pobūdis)
+5. [Rizikų vertinimas](#5-rizikų-vertinimas)
 
 ---
 
-## 1. Įvadas
+## 1. Komandos įgūdžiai ir patirtis
 
-### 1.1 Dokumento paskirtis
+### 1.1. Komandos sudėtis
 
-Šis dokumentas apibrėžia testavimo planą StudentPortal sistemai – edukaciniam valdymo portalui, kuriame veikia trys vartotojų rolės: **Studentas**, **Dėstytojas** ir **Administratorius**. Planas skirtas nuosekliam testavimo procesui organizuoti ir valdyti nuo techninių reikalavimų analizės iki produkto paleidimo.
+Projektą vykdo vidutinio dydžio programinės įrangos kūrimo komanda, sudaryta iš kelių patirties lygių specialistų. Kiekvienas narys prisideda prie testavimo proceso pagal savo kompetencijų sritį.
 
-### 1.2 Sistemos apžvalga
+| Pozicija | Skaičius | Atsakomybė testavime |
+|---|---|---|
+| Senior Full-Stack Developer | 1 | Testavimo architektūros projektavimas, kodo peržiūra, integracinių testų strategija |
+| Mid Full-Stack Developer | 1 | Vienetų ir integracinių testų rašymas, CI/CD konfigūracija |
+| Junior Frontend Developer | 1 | Frontend komponentų testai, manualinis testavimas |
+| Junior Backend Developer | 1 | Backend vienetų testai, defektų dokumentavimas |
 
-| Komponentas | Technologija | Paskirtis |
-|-------------|-------------|-----------|
-| Frontend | React 19, Tailwind CSS 4, nginx | Naudotojo sąsaja |
-| Backend API | .NET 8 Web API | Verslo logika, REST API |
-| Duomenų bazė | SQL Server 2022 Express | Duomenų saugykla |
-| Konteinerizacija | Docker / Docker Compose | Aplinkų valdymas |
+> **Pastaba:** Projekte nėra dedikuoto QA inžinieriaus. Testavimo atsakomybė padalinta tarp kūrėjų pagal ISTQB „whole-team" principą.
 
-Pagrindiniai funkcionalumai:
-- Autentikacija (JWT HS256, BCrypt slaptažodžiai)
-- Pažymių valdymas (CRUD su validacija)
-- Tvarkaraščio valdymas (CRUD)
-- Vartotojų administravimas (rolių keitimas, apsauga nuo paskutinio admin ištrynimo)
-- Profilio valdymas
+### 1.2. Techninių įgūdžių vertinimas
 
----
+#### Backend testavimas
 
-## 2. Komandos įgūdžiai ir patirtis
+| Technologija / Įrankis | Junior | Mid | Senior | Naudojama projekte |
+|---|---|---|---|---|
+| C# / .NET 8 | Pradedantysis | Vidutinis | Ekspertas | ✓ |
+| xUnit | Pradedantysis | Vidutinis | Ekspertas | ✓ |
+| Moq (mocking) | Nėra | Vidutinis | Ekspertas | ✓ |
+| EF Core InMemory | Nėra | Vidutinis | Ekspertas | ✓ |
+| Coverlet / ReportGenerator | Nėra | Pradedantysis | Vidutinis | ✓ |
+| Integration Testing | Nėra | Pradedantysis | Vidutinis | ✓ |
 
-### 2.1 Komandos profilis
+#### Frontend testavimas
 
-Projektas – akademinio pobūdžio, vykdomas studentų komandos. Vertinamas vidutinis patirties lygis kiekvienoje srityje.
+| Technologija / Įrankis | Junior | Mid | Senior | Naudojama projekte |
+|---|---|---|---|---|
+| JavaScript / React 19 | Pradedantysis | Vidutinis | Ekspertas | ✓ |
+| Jest | Pradedantysis | Vidutinis | Ekspertas | ✓ |
+| React Testing Library | Pradedantysis | Vidutinis | Ekspertas | ✓ |
+| HTTP mocking (axios) | Nėra | Vidutinis | Ekspertas | ✓ |
+| E2E (Playwright/Cypress) | Nėra | Nėra | Vidutinis | ✗ (ateityje) |
 
-| Sritis | Technologijos | Patirtis | Pastabos |
-|--------|--------------|---------|---------|
-| Frontend kūryba | React, Tailwind CSS | Vidutinė | Komanda dirbo su React komponentais, kontekstais ir maršrutizavimu |
-| Backend kūryba | .NET 8, EF Core, REST API | Vidutinė | CRUD kontroleriai ir JWT autentikacija jau implementuoti |
-| Testavimas (FE) | Jest, React Testing Library | Pradedantysis–vidutinis | Parašyti baziniai unit testai (auth, Login, Register, student API) |
-| Testavimas (BE) | xUnit, Moq, EF InMemory | Vidutinė | AAA šablonas, izoliuota duomenų bazė per `TestDbContextFactory` |
-| Integraciniai testai | AspNetCore.Mvc.Testing | Pradedantysis | Yra 5 integraciniai testai, bet apimtis ribota |
-| Saugumas | JWT, BCrypt, OWASP | Žema–vidutinė | Pagrindiniai mechanizmai įdiegti, bet nėra saugumo-specifinio testavimo |
-| Docker / CI | Docker Compose | Žema | Konfigūracija parašyta, bet automatizuotas pipeline nėra |
-| Rankinis testavimas | Funkciniai testai | Vidutinė | Dokumentuota `Manualinis-Testavimas.md` |
+#### Manualinis testavimas
 
-### 2.2 Technikų parinkimo pagrindimas
+| Įgūdis | Junior | Mid | Senior |
+|---|---|---|---|
+| Test case rašymas (ISTQB) | Pradedantysis | Vidutinis | Ekspertas |
+| Rizikos analizė | Nėra | Vidutinis | Ekspertas |
+| Defektų klasifikavimas | Pradedantysis | Vidutinis | Ekspertas |
+| Regresinis testavimas | Pradedantysis | Vidutinis | Ekspertas |
 
-Atsižvelgiant į komandos patirtį, pasirinktos šios testavimo technikos:
+### 1.3. Taikytos testavimo technikos pagal komandos galimybes
 
-| Technika | Pagrindimas |
-|----------|-------------|
-| **Unit testai (xUnit / Jest)** | Komanda turi patirties; greitai vykdomi; gerai dokumentuoti |
-| **Integraciniai testai (AspNetCore.Mvc.Testing)** | Esami testai rodo pagrindines žinias; svarbu patikrinti duomenų srautus |
-| **Rankinis funkcinis testavimas** | Tinkamas komandai be automatizuoto E2E; lentelėmis dokumentuotas testavimas per Swagger ir naršyklę |
-| **Juodosios dėžės testavimas** | Paprasta taikyti API lygyje naudojant HTTP klientus (Swagger, `.http` failai) |
-| **Ribinių reikšmių analizė** | Pažymių validacijai (Score 0–MaxScore); datos formatams |
-| **Lygiavertiškumo skaidymas** | Rolių testams; validacijos atvejams |
-| **Saugumo tikrinimas** | OWASP Top 10 punktoriai per rankines apžvalgas; JWT analizė |
+Atsižvelgiant į komandos patirties lygius ir projekto terminus, pasirinktos šios technikos:
 
-**Vengtinos technikos** (per sudėtingos dabartinei patirčiai):
-- Automatizuotas E2E testavimas (Selenium/Playwright) – reikia papildomų žinių
-- Apkrovos / streso testavimas – nėra priemonių ir patirties
-- Fuzzing – per pažengęs lygis
-
----
-
-## 3. Testavimo tikslai ir komandos misija
-
-### 3.1 Misija
-
-> **Užtikrinti, kad StudentPortal sistema veiktų patikimai, saugiai ir atitiktų visus funkcinius bei nefunkcinius reikalavimus prieš paleidimą į produkciją.**
-
-### 3.2 Testavimo tikslai
-
-| # | Tikslas | Prioritetas | Sėkmės kriterijus |
-|---|---------|-------------|------------------|
-| T-01 | Patikrinti visų autentikacijos srautų veikimą | Kritinis | 100 % autentikacijos testų praeina |
-| T-02 | Valdyti duomenų korektiškumą (pažymiai, tvarkaraštis) | Aukštas | Visos CRUD operacijos veikia teisingai; validacija blokuoja neleistinus duomenis |
-| T-03 | Patikrinti rolių prieigos kontrolę | Kritinis | Studentai nemato kitų studentų duomenų; tik Admin gali keisti roles |
-| T-04 | Nustatyti saugumo spragas | Aukštas | JWT tokenai validuojami; slaptažodžiai šifruojami; SQL injekcija blokuojama per EF Core |
-| T-05 | Užtikrinti Docker aplinkos veikimą | Vidutinis | `docker-compose up` pasileidžia be klaidų; visi 3 konteineriai sveiki |
-| T-06 | Patikrinti kodo padengimą testais | Vidutinis | Backend ≥ 70 % eilučių, Frontend ≥ 60 % eilučių |
-| T-07 | Rankinis pilnos sistemos testavimas | Aukštas | Visi FR-01–FR-05 testai praeina be kritinių klaidų |
-| T-08 | Nefunkciniai reikalavimai (greitis) | Žemas | API atsakymo laikas < 500 ms normaliai apkrovai |
-
-### 3.3 Testavimo ribos (kas netestavama)
-
-- Tiesioginė produkcijos aplinkos infrastruktūra
-- Trečiųjų šalių paslaugos (SQL Server Microsoft garantuojamas)
-- Apkrovos testavimas (daugiau nei 100 vienu metu vartotojų)
-- Mobiliosios platformos (naudojamas standartinis naršyklės responsive layout)
+| Technika | Kas taiko | Pagrindimas |
+|---|---|---|
+| **AAA (Arrange, Act, Assert) šablonas** | Visa komanda | Industrijoje priimtas standartas; aiškus Junior'ams |
+| **Ekvivalenčių klasių dalijimas** | Mid, Senior | Efektyvus testų kiekio optimizavimui |
+| **Ribinių reikšmių analizė** | Mid, Senior | Taikyta Score (0..MaxScore) laukams |
+| **Klaidų spėjimas** | Senior | Paremta patirtimi ir OWASP Top 10 |
+| **Kontrolinis sąrašas** | Junior, Mid | Manualiniam testavimui pagal reikalavimus |
+| **Rizika pagrįstas prioritizavimas** | Senior | Laiko optimizavimui: pirma testuoti kritiška |
 
 ---
 
-## 4. Apribojimai
+## 2. Testavimo tikslai ir komandos misija
 
-### 4.1 Teisiniai ir norminiai apribojimai
+### 2.1. Misija
 
-| Apribojimas | Poveikis | Valdymas |
-|------------|---------|---------|
-| **BDAR / GDPR** | Studentų asmens duomenys (vardas, el. paštas, pažymiai) yra asmens duomenys; reikia saugios saugyklos ir prieigos kontrolės | Slaptažodžiai šifruojami BCrypt; JWT turi galiojimo laiką; rolių prieigos kontrolė |
-| **OWASP Top 10** | Privaloma tikrinti pagrindines saugumo rizikas | Įtraukta į testavimo planą (žr. T-04) |
-| **Akademiniai reikalavimai** | Projektas turi atitikti kurso testavimo reikalavimus | Dokumentuojami visi testavimo etapai |
+> Užtikrinti StudentPortal sistemos kokybę komerciniu lygiu – aptikti defektus kuo anksčiau kūrimo cikle, kad produktas būtų patikimas, saugus ir atitiktų kliento keliamus reikalavimus iki kiekvieno release'o.
 
-### 4.2 Techniniai apribojimai
+### 2.2. Testavimo tikslai
 
-| Apribojimas | Aprašymas |
-|------------|-----------|
-| **EF Core InMemory** | Nenaudoja realios SQL semantikos; kai kurios DB lygmens taisyklės netestuojamos |
-| **JWT paslaptis aplinkoje** | JWT raktas perduodamas per Docker env kintamuosius – jei eksponuojamas, sistema pažeidžiama |
-| **SQL Server Express** | Riboti iki 10 GB; be HA mechanizmų – netinka produkcijai |
-| **nginx statinė konfigūracija** | HTTPS nekonfigūruotas – saugumo apribojimas produkcijai |
-| **Nėra CI/CD pipeline** | Testai nevykdomi automatiškai kiekvienam kodo pakeitimui |
+| Nr. | Tikslas | Prioritetas | Sėkmės kriterijus |
+|---|---|---|---|
+| T-01 | Patvirtinti autentifikacijos ir autorizacijos teisingumą | Kritinis | Visi AuthController testai praeina; JWT validacija veikia |
+| T-02 | Patvirtinti pažymių CRUD operacijas ir validaciją | Kritinis | 14 GradesController testų praeina; Score ribos tikrinamos |
+| T-03 | Patvirtinti tvarkaraščių valdymo funkcionalumą | Aukštas | 13 ScheduleController testų praeina |
+| T-04 | Patvirtinti rolių pagrindu prieigos kontrolę | Kritinis | Studentas negali atlikti Teacher/Admin veiksmų |
+| T-05 | Aptikti ir pašalinti kritinius defektus prieš kiekvieną release'ą | Kritinis | 0 P1 defektų release metu |
+| T-06 | Pasiekti ≥ 80% kodo padengimą aktyvių modulių lygyje | Vidutinis | Coverlet/Jest ataskaita patvirtina |
+| T-07 | Patvirtinti sistemos elgesį manualinio testavimo metu | Aukštas | 26/26 TC įvykdyti, 0 P1 defektų |
 
-### 4.3 Projekto valdymo apribojimai
+### 2.3. Testavimo apimtis
+
+#### Įtraukta į testavimą (in scope):
+- Autentifikacijos modulis (prisijungimas, registracija, JWT generavimas, BCrypt)
+- Pažymių modulis (CRUD, validacija, filtravimas)
+- Tvarkaraščių modulis (CRUD, filtravimas pagal studentą/semestrą/dieną)
+- Vartotojų valdymo modulis (admin funkcijos)
+- Frontend API sluoksnis (`auth.js`, `student.js`)
+- Frontend komponentai: `Login.js`, `Register.js`
+- Integraciniai scenarijai (kelių kontrolerių sąveika)
+
+#### Neįtraukta į testavimą (out of scope):
+- E2E naršyklės testavimas (Playwright/Cypress) – planuojamas kitame sprintе
+- Apkrovos ir našumo testavimas – atskira iniciatyva
+- `StudentPage`, `TeacherPage`, `AdminPage` automatinis testavimas – reikalauja refaktorizavimo
+- Duomenų bazės migracijų kodo testavimas
+
+---
+
+## 3. Apribojimai
+
+### 3.1. Teisiniai ir atitikties apribojimai
+
+| Apribojimas | Aprašymas | Poveikis testavimui |
+|---|---|---|
+| **BDAR / GDPR** | Sistema tvarko asmens duomenis: vardas, pavardė, el. paštas, akademiniai rezultatai | Testavimo duomenys turi būti sintetiniai; realių kliento duomenų naudojimas draudžiamas |
+| **Duomenų saugojimas** | Slaptažodžiai privalo būti hash'inami BCrypt algoritmu | Testas tikrina, kad aiškūs slaptažodžiai niekada nesaugomi duomenų bazėje |
+| **Duomenų prieigos kontrolė** | Studentas privalo matyti tik savo duomenis | Rolebasedaccess testai privalomi kiekvienam release'ui |
+
+### 3.2. Techniniai ir vidiniai standartai
+
+| Standartas | Taikymas projekte |
+|---|---|
+| **ISO/IEC 25010** | Kokybės modelis: funkcionalumas, patikimumas, saugumas, naudojamumas, palaikomumas |
+| **ISTQB Foundation Level** | Testavimo terminija, procesų struktūra, defektų klasifikacija |
+| **OWASP Top 10** | Saugumo testavimo kontrolinis sąrašas (SQL injection, broken auth, CORS) |
+| **HTTP RFC 9110** | HTTP atsakymų kodų teisingas naudojimas (200, 201, 400, 401, 404) |
+| **Semantic Versioning** | Produkto versijų valdymas |
+
+### 3.3. Projekto valdymo apribojimai
+
+| Apribojimas | Detalės |
+|---|---|
+| **Iteracijos** | 2 savaičių sprintai; testavimas integruotas į kūrimo ciklą (shift-left) |
+| **Definition of Done** | Funkcija laikoma baigta tik kai testai parašyti, praeina ir PR peržiūra atlikta |
+| **Biudžetas** | Naudojami tik open-source įrankiai (xUnit, Jest, Playwright) |
+| **Aplinka** | Dev: Windows 11 / Docker; CI: GitHub Actions; Prod: konteinerizuota aplinka |
+| **Branching** | GitFlow: `main` (prod), `develop`, `feature/*`, `hotfix/*` |
+
+### 3.4. Techniniai apribojimai
 
 | Apribojimas | Poveikis |
-|------------|---------|
-| Riboti žmogiškieji ištekliai (studentų komanda) | Prioritizuoti kritiniai testai |
-| Akademiniai terminai | Testavimas vykdomas paraleliai su kūryba |
-| Nėra tinkamos QA aplinkos | Testavimas vykdomas lokaliose Docker aplinkose |
+|---|---|
+| EF Core InMemory nesilaiko visų SQL taisyklių (UNIQUE, FK constraints) | Duomenų lygio validacija testuojama kodo lygiu, ne DB lygiu |
+| ESM moduliai (axios, jwt-decode) reikalauja specialios Jest konfigūracijos | `transformIgnorePatterns` pridėtas į `package.json` |
+| Nėra dedicated QA aplinkos | Testavimas vykdomas dev aplinkoje; staging aplinka planuojama |
 
 ---
 
-## 5. Projekto ir verslo pobūdis
+## 4. Projekto ir verslo pobūdis
 
-### 5.1 Sistemos klasifikacija
+### 4.1. Produkto aprašymas
 
-StudentPortal yra **vidaus naudojimo edukacinis valdymo sistema** (angl. *Learning Management System – LMS*), naudojama:
-- Mokymo įstaigos vidiniam studentų pažangos valdymui
-- Dėstytojų ir studentų komunikacijai per sistemos duomenis
+**StudentPortal** – komercinė švietimo valdymo sistema (Educational Management System / EMS), kuriama švietimo įstaigoms. Produktas teikiamas kaip SaaS sprendimas, todėl patikimumas, saugumas ir duomenų tikslumas yra verslo kritiniai reikalavimai.
 
-**Verslo kritiniai procesai:**
-1. Tikslus pažymių įrašymas ir peržiūra
-2. Saugus autentikacijos ir autorizacijos valdymas
-3. Tvarkaraščio informacijos prieinamumas
+### 4.2. Verslo kontekstas
 
-### 5.2 Duomenų jautrumas
+| Aspektas | Detalės |
+|---|---|
+| **Klientas** | Švietimo įstaigos (universitetai, mokyklos) |
+| **Naudotojai** | Studentai, dėstytojai, administratoriai |
+| **Komercinė svarba** | SLA (Service Level Agreement) įsipareigojimai klientui; defektai produkcinėje aplinkoje = finansinė ir reputacinė žala |
+| **Release ciklas** | Kiekvieną sprintą (2 savaitės) |
+| **Palaikymas** | Post-release hotfix'ai per 24–48 val. kritiniams defektams |
 
-| Duomenų tipas | Jautrumas | Apsaugos reikalavimas |
-|--------------|-----------|----------------------|
-| Slaptažodžiai | Labai aukštas | BCrypt šifravimas (jau įdiegta) |
-| Pažymiai | Aukštas | Prieiga tik autorizuotiems vartotojams |
-| Tvarkaraštis | Vidutinis | Autentikuotas prieigos valdymas |
-| Kontaktiniai duomenys | Vidutinis | BDAR standartų laikymasis |
+### 4.3. Verslo kritiniai procesai
 
-### 5.3 Kokybės standartai
+Testavimo požiūriu šie procesai tiesiogiai veikia verslo vertę:
 
-Projektas orientuojasi į šiuos standartus:
-- **ISO/IEC 25010** kokybės modelis (funkcionalumas, patikimumas, saugumas, priežiūrumas)
-- **ISTQB** testavimo geriausios praktikos (AAA šablonas, testų izoliacija)
-
----
-
-## 6. Rizikos vertinimas
-
-### 6.1 Techninės rizikos
-
-| ID | Rizika | Tikimybė | Poveikis | Kritinumas | Valdymas |
-|----|--------|----------|---------|-----------|---------|
-| R-01 | JWT raktas eksponuotas aplinkoje | Vidutinė | Kritinis | **Aukštas** | Naudoti Docker secrets arba env failą be versijų kontrolės |
-| R-02 | SQL injekcija per EF Core raw queries | Žema | Kritinis | Vidutinis | EF Core apsaugo parametrizuotais užklausomis; patikrinti nėra raw SQL |
-| R-03 | Autorizacijos apėjimas (IDOR) | Vidutinė | Aukštas | **Aukštas** | Patikrinti, ar studentas gali pasiekti kitų studentų pažymius |
-| R-04 | Paskutinio admin apsaugos klaida | Žema | Aukštas | Vidutinis | Testas jau parašytas; papildomai rankinis testas |
-| R-05 | InMemory DB nesimokuoja realioms sąlygoms | Aukšta | Vidutinis | Vidutinis | Integraciniai testai su realia DB; rankinis testavimas |
-| R-06 | CORS konfigūracijos klaida | Vidutinė | Vidutinis | Vidutinis | Tikrinti per naršyklę su `fetch` iš skirtingų kilmių |
-| R-07 | Docker healthcheck gedimas | Žema | Aukštas | Vidutinis | Patikrinti `docker-compose up` visus tris konteinerius |
-
-### 6.2 Verslo rizikos
-
-| ID | Rizika | Poveikis | Valdymas |
-|----|--------|---------|---------|
-| R-08 | Neteisingi pažymiai įrašyti be validacijos | Akademiniai duomenys sugadinti | Griežta serverio pusės validacija (įdiegta); testai patvirtina |
-| R-09 | Studentas mato kito studento pažymius | Privatumo pažeidimas | Prieigos kontrolė testuojama |
-| R-10 | Sistema neveikia Docker aplinkoje | Negalima naudoti | E2E Docker testas |
-
-### 6.3 Projekto žlugimo rizikos ir pasekmės
-
-| Scenarijus | Pasekmės žmonėms | Pasekmės aplinkai | Pasekmės įmonei |
-|-----------|-----------------|------------------|----------------|
-| Duomenų nutekėjimas (studentų pažymiai) | Privatumo pažeidimas, akademinis žalas | – | Reputacijos žala, teisinė atsakomybė (BDAR) |
-| Autentikacijos apėjimas | Neteisėta prieiga prie kitų duomenų | – | Teisinis atsakingumas, sistemos kompromitavimas |
-| Duomenų bazės korupcija | Pažymių praradimas | – | Akademinių duomenų praradimas, darbo praradimas |
-| Sistema nepaleidžiama Docker konteineryje | Vartotojai negali prisijungti | – | Akademinės veiklos sutrikdymas |
-
-**Pastaba:** Kadangi tai edukacinė sistema (ne medicinė, pramoninė ar finansinė), pavojus žmonių gyvybei ar aplinkos žala nėra aktualūs. Pagrindiniai pavojai – privatumo ir akademinių duomenų kompromitavimas.
+| Procesas | Verslo poveikis klaidai | Testavimo prioritetas |
+|---|---|---|
+| **Autentifikacija** | Neteisėta prieiga -> BDAR pažeidimas -> baudos, reputacinė žala | Kritinis |
+| **Pažymių tikslumas** | Neteisingi akademiniai įrašai -> kliento skundas, SLA pažeidimas | Kritinis |
+| **Rolių atskyrimas** | Duomenų nutekėjimas -> teisinė atsakomybė | Kritinis |
+| **Tvarkaraščių valdymas** | Neveikianti funkcija -> vartotojų nepasitenkinimas | Aukštas |
+| **Sistemos prieinamumas** | Downtime -> SLA pažeidimas -> kompensacijos | Aukštas |
 
 ---
 
-## 7. Testavimo apimtis
+## 5. Rizikų vertinimas
 
-### 7.1 Testuojami komponentai
+### 5.1. Projekto žlugimo rizikos
 
-| Komponentas | Testavimo tipas | Statusas |
-|-------------|----------------|---------|
-| `AuthController` | Unit + integracinis | Testuojama |
-| `GradesController` | Unit + integracinis | Testuojama |
-| `ScheduleController` | Unit + integracinis | Testuojama |
-| `StudentController` | Unit | Testuojama |
-| `UserController` | Unit | Iš dalies (trūksta testų) |
-| `auth.js` (FE API) | Unit | Testuojama |
-| `student.js` (FE API) | Unit | Testuojama |
-| `admin.js` (FE API) | Unit | **Nėra testų** |
-| `Login.js` (komponentas) | Unit (RTL) | Testuojama |
-| `Register.js` (komponentas) | Unit (RTL) | Testuojama |
-| `Dashboard.js`, `StudentPage.js` ir kt. | Unit (RTL) | **Nėra testų** |
-| `PrivateRoute.js` | Unit | **Nėra testų** |
-| Docker Compose aplinka | Integracinis / rankinis | Rankinis |
+| Rizikos ID | Rizika | Tikimybė | Poveikis | Prioritetas | Atsakingas |
+|---|---|---|---|---|---|
+| R-01 | Autentifikacijos klaida – neteisėta prieiga | Žema | Kritinis | **P1** | Senior Dev |
+| R-02 | Neteisingi pažymiai pateikiami studentams | Žema | Kritinis | **P1** | Mid Dev |
+| R-03 | SQL injekcija per API parametrus | Vidutinė | Kritinis | **P1** | Senior Dev |
+| R-04 | JWT tokeno klastojimas / manipuliacija | Žema | Kritinis | **P1** | Senior Dev |
+| R-05 | Negrįžtama DELETE operacija be patvirtinimo | Vidutinė | Aukštas | **P2** | Mid Dev |
+| R-06 | CORS konfigūracijos klaida | Žema | Vidutinis | **P3** | Mid Dev |
+| R-07 | Neteisingas slaptažodžio hash'inimas | Žema | Kritinis | **P1** | Senior Dev |
+| R-08 | Sesijos neištrynimas po logout | Vidutinė | Aukštas | **P2** | Junior Dev |
+| R-09 | Produkcijos aplinkos konfigūracijos klaida | Žema | Kritinis | **P1** | Senior Dev |
+| R-10 | Nepakankamas kodo padengimas -> neatrastas defektas prod. | Vidutinė | Aukštas | **P2** | Visa komanda |
 
-### 7.2 Netestavimo sritys (pagrindimas)
+### 5.2. Grėsmės produktui ir pasekmės
 
-| Sritis | Pagrindimas |
-|--------|------------|
-| `WeatherForecastController` | Šabloninis kodas, nenaudojamas produkcijai; pašalintinas |
-| nginx konfigūracija | Statinė; tikrinama Docker paleisties metu |
-| SQL Server pati | Trečioji šalis, garantuoja Microsoft |
-| Mobiliosios naršyklės | Nėra responsive dizaino reikalavimų |
+| Grėsmė | Aprašymas | Galimos pasekmės |
+|---|---|---|
+| **Neteisėta prieiga** | Vartotojas be tinkamos rolės pasiekia kitų duomenis | BDAR baudos (iki 4% metinės apyvartos), kliento sutarties nutraukimas |
+| **Duomenų korupcija** | Neteisingi pažymiai įrašomi dėl validacijos trūkumų | Kliento skundas, SLA kompensacija, reputacinė žala |
+| **Paskyros perėmimas** | Silpna autentifikacija leidžia prisijungti su svetimais duomenimis | Teisinė atsakomybė, duomenų praradimas |
+| **Sistemos neprieinamumas** | Kritinis defektas produkcinėje aplinkoje | SLA pažeidimas -> finansinės kompensacijos |
+| **Duomenų nutekėjimas** | Asmens duomenys prieinami be autorizacijos | Reguliatoriaus tyrimas, BDAR pažeidimas |
 
----
+### 5.3. Rizikų mažinimo priemonės
 
-## 8. Testavimo metodai ir technikos
-
-### 8.1 Baltosios dėžės testavimas (backend unit testai)
-
-- **Įrankis:** xUnit 2.5.3, Moq 4.20.72, EF Core InMemory
-- **Metodas:** AAA (Arrange–Act–Assert)
-- **Izoliacija:** `TestDbContextFactory` kuria atskirą in-memory DB kiekvienam testui
-- **Denysta:** kontroleriai su tiesioginiu `AppDbContext` – nėra abstrakcijos sluoksnio (service layer)
-
-### 8.2 Integracinis testavimas
-
-- **Įrankis:** `Microsoft.AspNetCore.Mvc.Testing` (WebApplicationFactory)
-- **Apimtis:** duomenų srautų patikrinimas per kelis kontrolerius
-- **Esami testai:** 5 integraciniai testai `IntegrationTests.cs`
-
-### 8.3 Funkcinis (juodosios dėžės) testavimas – Frontend
-
-- **Įrankis:** Jest 27+, React Testing Library 16, @testing-library/user-event
-- **Metodas:** renderinti komponentai, simuliuoti įvykius, tikrinti DOM
-- **Apimtis:** Login, Register, auth API, student API
-
-### 8.4 Rankinis testavimas
-
-- **Apimtis:** FR-01–FR-05 (žr. `Manualinis-Testavimas.md`)
-- **Aplinka:** Docker Compose arba `dotnet run` + `npm start`
-- **Įrankiai:** Swagger UI (`/swagger`), naršyklė, `.http` failai VS Code
-
-### 8.5 Saugumo testavimas
-
-- **Metodas:** Rankinis OWASP Top 10 peržiūra
-- **Tikrinami punktai:**
-  - A01 – Prieigos kontrolė: IDOR tarp studentų
-  - A02 – Kriptografiniai gedimai: JWT rakto saugumas
-  - A03 – Injekcija: EF Core parametrizuoti užklausai
-  - A07 – Autentikacijos klaidos: JWT galiojimo tikrinimas
-
-### 8.6 Ribinių reikšmių analizė
-
-| Laukas | Ribos | Testai |
-|--------|-------|--------|
-| `Score` | 0 ≤ score ≤ MaxScore | Unit testai (score > MaxScore, score < 0) |
-| `MaxScore` | > 0 (implicitinis) | Unit testai |
-| `Role` | enum: Student/Teacher/Admin | Rankinis testas |
-| `GradeType` | enum: 6 reikšmės | Unit testai |
+| Rizikos ID | Priemonė | Atsakingas | Terminas |
+|---|---|---|---|
+| R-01, R-04 | JWT autentifikacija visoms apsaugotoms operacijoms; AuthControllerTests | Senior Dev | Kiekvienas sprint |
+| R-02 | Score validacija kodo lygiu (0 ≤ Score ≤ MaxScore); GradesControllerTests | Mid Dev | Sprint 1 |
+| R-03 | EF Core parametrizuotos užklausos (ORM apsauga); OWASP peržiūra | Senior Dev | Sprint 1 |
+| R-05 | Manualinis DELETE scenarijų testavimas; UI patvirtinimo dialogo pridėjimas | Mid Dev | Sprint 2 |
+| R-07 | BCrypt + salt; testuojama AuthControllerTests | Senior Dev | Sprint 1 |
+| R-08 | localStorage.clear() po logout; auth.test.js | Junior Dev | Sprint 1 |
+| R-10 | Gate: PR merge blokuojamas jei padengimas < 80% | Senior Dev | CI konfigūracija |
 
 ---
 
-## 9. Testavimo aplinka
+## Priedai
 
-### 9.1 Aplinkų aprašymas
+### A. Definition of Done (DoD)
 
-| Aplinka | Aprašymas | Naudojimas |
-|---------|-----------|-----------|
-| **Lokali kūrimo** | `dotnet run` + `npm start`, SQLite/localDB | Unit testai |
-| **Docker lokali** | `docker-compose up` – visi 3 konteineriai | Integraciniai + rankiniai testai |
-| **CI/CD** | *Neplanuota (ateities darbas)* | – |
+Funkcija laikoma baigta, kai:
+- [ ] Kodas parašytas ir peržiūrėtas (PR approved)
+- [ ] Unit testai parašyti ir praeina
+- [ ] Kodo padengimas ≥ 80% naujam kodui
+- [ ] Manualinis testavimas atliktas (jei reikia)
+- [ ] Defektai dokumentuoti ir sutvarkyti
+- [ ] CI pipeline praeina (build + testai)
+- [ ] Dokumentacija atnaujinta (jei reikia)
 
-### 9.2 Seed duomenys
+### B. Testavimo aplinkos konfigūracija
 
-Docker aplinkoje automatiškai sukuriami:
-- `student@test.com` / `Student123!`
-- `teacher@test.com` / `Teacher123!`
-- `admin@test.com` / `Admin123!`
-
-### 9.3 Aplinkos konfigūracija
-
-Jautrios reikšmės perduodamos per aplinkos kintamuosius:
-- `JWT__Key` – JWT paslaptyje
-- `ConnectionStrings__DefaultConnection` – DB ryšys
-- Nenaudojamas `appsettings.json` su realiais duomenimis
-
----
-
-## 10. Tvarkaraštis ir etapai
-
-### 10.1 Testavimo etapai
-
-| Etapas | Veikla | Trukmė | Atsakingas |
-|--------|--------|--------|-----------|
-| **1. Planavimas** | Šio dokumento rengimas; rizikų analizė | 1 savaitė | Visi |
-| **2. Unit testavimas (BE)** | xUnit testai – AuthController, GradesController, ScheduleController, UserController | 1 savaitė | BE kūrėjas |
-| **3. Unit testavimas (FE)** | Jest testai – visi puslapiai ir API funkcijos | 1 savaitė | FE kūrėjas |
-| **4. Integracinis testavimas** | AspNetCore testai; Docker Compose aplinkos testas | 1 savaitė | Visi |
-| **5. Rankinis testavimas** | FR-01–FR-05; saugumo tikrinimas | 3 dienos | QA / visi |
-| **6. Ataskaitų rengimas** | Defektų registravimas, metrikos, ataskaita | 2 dienos | Visi |
-
-### 10.2 Išėjimo kriterijai
-
-Testavimas laikomas baigtu, kai:
-- [ ] Visi unit testai praeina (0 nesėkmių)
-- [ ] Integraciniai testai praeina
-- [ ] Backend kodo padengimas ≥ 70 %
-- [ ] Frontend kodo padengimas ≥ 60 %
-- [ ] Visi kritiniai defektai išspręsti (P1, P2)
-- [ ] Rankinis testavimas: FR-01–FR-05 praeina
-- [ ] Docker Compose aplinka veikia `docker-compose up`
-- [ ] Saugumo peržiūra atlikta (IDOR, JWT, SQL injekcija)
-
----
-
-## 11. Priedai
-
-### 11.1 Susiję dokumentai
-
-| Dokumentas | Aprašymas |
-|-----------|-----------|
-| [Manualinis-Testavimas.md](Manualinis-Testavimas.md) | Rankinio testavimo atvejų lentelės |
-| [Automatinis-Testavimas.md](Automatinis-Testavimas.md) | Automatinio testavimo vykdymo instrukcijos |
-| [StudentPortal-Techniniai-Aspektai.md](StudentPortal-Techniniai-Aspektai.md) | DB schema, API dokumentacija |
-| [Testavimo-Strategija.md](Testavimo-Strategija.md) | Testavimo strategija (šio plano papildymas) |
-| [Testavimo-Ataskaita.md](Testavimo-Ataskaita.md) | Testavimo rezultatų ataskaita |
-
-### 11.2 Terminų žodynas
-
-| Terminas | Apibrėžimas |
-|---------|------------|
-| AAA | Arrange–Act–Assert: unit testų struktūros šablonas |
-| CRUD | Create, Read, Update, Delete – pagrindinės duomenų operacijos |
-| IDOR | Insecure Direct Object Reference – prieigos kontrolės pažeidžiamumas |
-| JWT | JSON Web Token – autentikacijos mechanizmas |
-| EF Core | Entity Framework Core – .NET ORM karkasas |
-| RTL | React Testing Library – frontend testavimo biblioteka |
-| FR | Functional Requirement – funkcinis reikalavimas |
-| BDAR | Bendrasis duomenų apsaugos reglamentas (GDPR) |
+| Aplinka | Paskirtis | Konfigūracija |
+|---|---|---|
+| **Local (dev)** | Kūrėjo darbas | Windows 11, .NET 8, Node 18, LocalDB |
+| **CI** | Automatinis testų vykdymas | GitHub Actions, Docker |
+| **Staging** | Pre-release testavimas | Identiškas produkcijai (planuojamas) |
+| **Production** | Klientų aplinka | Docker Compose, SQL Server |
